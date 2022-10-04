@@ -1,5 +1,8 @@
-# filter-freq-response-vis
+# Filter Frequency Response Visualizer
 GitHub repo for SDSU Senior Design Team 18, Filter Frequency Response Visualizer, or FFRV
+
+## SYSTEM DESCRIPTION
+The FFRV system  will be a test box used for measuring the frequency response of a user-provided passive filter. Once started, the system will apply a frequency sweep across an inputted filter, then measure the filter output gain and phase shift using analog computations, inputted to an Arduino Due microcontroller. Thus, this FFRV system will calculate the Bode plots for a real-world filter. The purpose of the FFRV system is to allow students, hobbyists, and other casual filter-designers a rapid way to gain insight into simple filters, such as what frequencies they pass or reject. As such, the FFRV system will be designed to be straightforward to use. It shall have a box face with only a select few clearly-labeled inputs, and output a data file of the measurements to the user computer, connected over USB to the test box. The functional components in this system will include a procured waveform generator, a PCB for distributing power and performing analog analysis on filter magnitude and phase, an Arduino Due for converting the analog values to digital and controlling the waveform generator, and a NET application which will provide the user an interface to work with the system.
 
 
 ## USING GITHUB
