@@ -101,3 +101,9 @@ __3) Pull Request:__
 The final part in a branches lifecycle is its death, which happens by merging it into the `main` branch. A merge into the `main` branch is called a pull request. It's poorly named, but there's no changing what GitHub refers to it as so so be it. You can find the list of branches on GitHub website by clicking "\<\> Code" when in the repositor folder. Click on the "Branches" tab. When you click on this, you will see a list of branches. Click on the "Pull Request" button next to the desired branch. Add a comment providing a paragraph description of what has been changed, and add reviewers for who should review the changes before its merged into `main`. Publish once you are ready.
 <br>
 ### Other Helpful CLI:
+`git checkout <branch name>`
+<br>
+`git branch`
+Lists all branches currently visible on the local machine. (Other branches in the remote will be accessible using a `git checkout`, but may not be visible using git branch)
+`git log` 
+See all commits in the repository (if you've made new commits, these should show up here. It zhould also be synced with the remote if you've run `git fetch` and `git pull`)
