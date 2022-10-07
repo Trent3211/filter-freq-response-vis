@@ -26,9 +26,9 @@ __Add the repository__
 <br>
 Go to the desired directory (if you followed the steps in "Create Git Repo Folder", you will already be in the desired folder) and clone the repository. The comand will look like the following
 ```
-git clone https://github.com/<GitHub User Name>/filter-freq-response-vis.git <Optional: What you'd like the document to be named>
+git clone https://github.com/Trent3211/filter-freq-response-vis.git <Optional: What you'd like the document to be named>
 ```
-Sections wrapped by \< \> will want to be replaced by what is referred to in the section. For instance, I (Trent) would replace `<GitHub User Name>` with `Trent3211`. You should be able to now see a folder with the title you provided in the `<Optional: ...>` section, or it will be titled filter-freq-reponse-vis. You can view this in your file explorer, or by using the `dir` command in the Terminal (Command Prompt). To verify that the repository was properly imported, open the folder using the Windows File explorer. Check the folder for the README.md file. Its contents should match this file. 
+Sections wrapped by \< \> will want to be replaced by what is referred to in the section. You should be able to now see a folder with the title you provided in the `<Optional: ...>` section, or it will be titled filter-freq-reponse-vis. You can view this in your file explorer, or by using the `dir` command in the Terminal (Command Prompt). To verify that the repository was properly imported, open the folder using the Windows File explorer. Check the folder for the README.md file. Its contents should match this file. 
 
 ### Creating a commit: 
 
