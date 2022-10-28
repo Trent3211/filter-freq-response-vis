@@ -39,32 +39,26 @@ namespace WindowsTestApp
         }
         private void trackBar1_ValueChanged(object sender, EventArgs e)
         {
-            numericUpDown1.Value = Convert.ToInt32(trackBar1.Value);
         }
 
         private void trackBar2_ValueChanged(object sender, EventArgs e)
         {
-            numericUpDown2.Value = Convert.ToInt32(trackBar2.Value);
         }
 
         private void trackBar3_ValueChanged(object sender, EventArgs e)
         {
-            numericUpDown3.Value = Convert.ToInt32(trackBar3.Value);
         }
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
-            trackBar1.Value = Convert.ToInt32(numericUpDown1.Value);
         }
 
         private void numericUpDown2_ValueChanged(object sender, EventArgs e)
         {
-            trackBar2.Value = Convert.ToInt32(numericUpDown2.Value);
         }
 
         private void numericUpDown3_ValueChanged(object sender, EventArgs e)
         {
-            trackBar3.Value = Convert.ToInt32(numericUpDown3.Value);
         }
 
         private void label4_Click(object sender, EventArgs e)
@@ -73,6 +67,11 @@ namespace WindowsTestApp
         }
 
         private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripStatusLabel2_Click(object sender, EventArgs e)
         {
 
         }
