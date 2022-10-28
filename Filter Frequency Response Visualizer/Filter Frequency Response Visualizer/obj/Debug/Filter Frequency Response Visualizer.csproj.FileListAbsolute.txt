@@ -1,0 +1,11 @@
+C:\Users\Jarrod\source\repos\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\Filter Frequency Response Visualizer.exe.config
+C:\Users\Jarrod\source\repos\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\Filter Frequency Response Visualizer.exe
+C:\Users\Jarrod\source\repos\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\Filter Frequency Response Visualizer.pdb
+C:\Users\Jarrod\source\repos\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.csproj.AssemblyReference.cache
+C:\Users\Jarrod\source\repos\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.csproj.SuggestedBindingRedirects.cache
+C:\Users\Jarrod\source\repos\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter_Frequency_Response_Visualizer.homeForm.resources
+C:\Users\Jarrod\source\repos\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter_Frequency_Response_Visualizer.Properties.Resources.resources
+C:\Users\Jarrod\source\repos\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.csproj.GenerateResource.cache
+C:\Users\Jarrod\source\repos\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.csproj.CoreCompileInputs.cache
+C:\Users\Jarrod\source\repos\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.exe
+C:\Users\Jarrod\source\repos\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.pdb
