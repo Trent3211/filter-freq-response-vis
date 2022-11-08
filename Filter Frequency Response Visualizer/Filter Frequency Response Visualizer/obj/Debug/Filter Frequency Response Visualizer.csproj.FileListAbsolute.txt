@@ -1,0 +1,73 @@
+C:\Users\Jarrod\source\repos\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\Filter Frequency Response Visualizer.exe.config
+C:\Users\Jarrod\source\repos\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\Filter Frequency Response Visualizer.exe
+C:\Users\Jarrod\source\repos\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\Filter Frequency Response Visualizer.pdb
+C:\Users\Jarrod\source\repos\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.csproj.AssemblyReference.cache
+C:\Users\Jarrod\source\repos\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.csproj.SuggestedBindingRedirects.cache
+C:\Users\Jarrod\source\repos\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter_Frequency_Response_Visualizer.homeForm.resources
+C:\Users\Jarrod\source\repos\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter_Frequency_Response_Visualizer.Properties.Resources.resources
+C:\Users\Jarrod\source\repos\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.csproj.GenerateResource.cache
+C:\Users\Jarrod\source\repos\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.csproj.CoreCompileInputs.cache
+C:\Users\Jarrod\source\repos\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.exe
+C:\Users\Jarrod\source\repos\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.pdb
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\Filter Frequency Response Visualizer.exe.config
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\Filter Frequency Response Visualizer.exe
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\Filter Frequency Response Visualizer.pdb
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.csproj.AssemblyReference.cache
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.csproj.SuggestedBindingRedirects.cache
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter_Frequency_Response_Visualizer.homeForm.resources
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter_Frequency_Response_Visualizer.Properties.Resources.resources
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.csproj.GenerateResource.cache
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.csproj.CoreCompileInputs.cache
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.exe
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.pdb
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\System.Reactive.Core.dll
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\System.Reactive.Interfaces.dll
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\System.Reactive.Linq.dll
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\System.Reactive.PlatformServices.dll
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\YamlDotNet.dll
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\System.Reactive.Core.xml
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\System.Reactive.Interfaces.xml
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\System.Reactive.Linq.xml
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\System.Reactive.PlatformServices.xml
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\YamlDotNet.xml
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.csproj.CopyComplete
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\LiveCharts.dll
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\LiveCharts.WinForms.dll
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\LiveCharts.Wpf.dll
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\LiveCharts.pdb
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\LiveCharts.xml
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\LiveCharts.WinForms.pdb
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\LiveCharts.WinForms.xml
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\LiveCharts.Wpf.pdb
+C:\Users\Jarrod\Desktop\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\LiveCharts.Wpf.xml
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\Filter Frequency Response Visualizer.exe.config
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\Filter Frequency Response Visualizer.exe
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\Filter Frequency Response Visualizer.pdb
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\LiveCharts.dll
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\LiveCharts.WinForms.dll
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\LiveCharts.Wpf.dll
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\System.Reactive.Core.dll
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\System.Reactive.Interfaces.dll
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\System.Reactive.Linq.dll
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\System.Reactive.PlatformServices.dll
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\YamlDotNet.dll
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\LiveCharts.pdb
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\LiveCharts.xml
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\LiveCharts.WinForms.pdb
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\LiveCharts.WinForms.xml
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\LiveCharts.Wpf.pdb
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\LiveCharts.Wpf.xml
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\System.Reactive.Core.xml
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\System.Reactive.Interfaces.xml
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\System.Reactive.Linq.xml
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\System.Reactive.PlatformServices.xml
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\bin\Debug\YamlDotNet.xml
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.csproj.AssemblyReference.cache
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.csproj.SuggestedBindingRedirects.cache
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter_Frequency_Response_Visualizer.homeForm.resources
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter_Frequency_Response_Visualizer.Properties.Resources.resources
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.csproj.GenerateResource.cache
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.csproj.CoreCompileInputs.cache
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.csproj.CopyComplete
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.exe
+C:\Users\Jarrod\Source\Repos\filter-freq-response-vis\Filter Frequency Response Visualizer\Filter Frequency Response Visualizer\obj\Debug\Filter Frequency Response Visualizer.pdb
