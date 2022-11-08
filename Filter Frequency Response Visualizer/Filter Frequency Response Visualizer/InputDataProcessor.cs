@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Filter_Frequency_Response_Visualizer
 {
-    internal class InputDataProcessor
+    public class InputDataProcessor
     {
         #region Properties
         public int[,] inputIntArray { get; set; } // Using [time, value] formatting
@@ -16,7 +12,7 @@ namespace Filter_Frequency_Response_Visualizer
         #endregion
 
         #region Constructor
-        public void processor(int numElements)
+        public InputDataProcessor(int numElements)
         {
             this.inputIntArray = new int[numElements, 2];
             this.inputDoubleArray = new double[numElements, 2];
