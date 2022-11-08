@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Filter_Frequency_Response_Visualizer
 {
@@ -27,8 +23,8 @@ namespace Filter_Frequency_Response_Visualizer
         public void ScaleValues(int scaleRange, double mag)
         {
             double rangeDouble = Convert.ToDouble(scaleRange);
-            
-            for(int i = 0; i < this.inputIntArray.Length / 2; i++)
+
+            for (int i = 0; i < this.inputIntArray.Length / 2; i++)
             {
                 double sampleDouble = Convert.ToDouble(this.inputIntArray[i, 1]);
 
