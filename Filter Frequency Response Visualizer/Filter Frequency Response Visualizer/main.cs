@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO.Ports;
 using System.Threading;
 using System.Windows.Forms;
+using LiveCharts;
 
 namespace Filter_Frequency_Response_Visualizer
 {
@@ -11,12 +12,16 @@ namespace Filter_Frequency_Response_Visualizer
     {
         #region Global Values
         public bool endOfData = false;
+        public List<string> inputStringList = new List<string>();
 
         public SerialPort nanoPort;
 
-        Thread serialReader;
+        //Thread serialReader;
+        ListViewDataRand Populate = new ListViewDataRand();
+        SeriesCollection series = new SeriesCollection();
+        SaveFileHandler SaveCSV = new SaveFileHandler();
+        PlottingHandler Plotter = new PlottingHandler();
 
-        public List<string> inputStringList = new List<string>();
 
         #endregion
 
@@ -30,8 +35,10 @@ namespace Filter_Frequency_Response_Visualizer
         #region Main Form Load
         private void homeForm_Load(object sender, EventArgs e)
         {
+            Populate.populateListView(dataView);
+            //phaseChart.LegendLocation = LegendLocation.Bottom;
+            //magnitudeChart.LegendLocation = LegendLocation.Bottom;
             loadComPorts();
-
         }
 
         #endregion
@@ -45,8 +52,6 @@ namespace Filter_Frequency_Response_Visualizer
         #endregion
 
         #region Methods
-
-        // Create a GetManufacturer mt
         private void loadComPorts()
         {
             string[] ports = SerialPort.GetPortNames();
@@ -82,9 +87,7 @@ namespace Filter_Frequency_Response_Visualizer
         #region Event Handlers
         private void saveButton_Click(object sender, EventArgs e)
         {
-            // Write the data from the 
-
-
+            SaveCSV.saveCSV(dataView);
 
         }
 
@@ -94,44 +97,38 @@ namespace Filter_Frequency_Response_Visualizer
             loadComPorts();
         }
 
-        private void buttonSample_Click(object sender, EventArgs e)
+        private void buttonData_Click(object sender, EventArgs e)
         {
-            
-        }
-        private void buttonIO_Click(object sender, EventArgs e)
-        {
-            // Opens a folder dialogue for the user to select the folder location to add to maskedIOBox
-            FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog();
-            folderBrowserDialog1.ShowNewFolderButton = true;
-            folderBrowserDialog1.RootFolder = Environment.SpecialFolder.MyComputer;
-            folderBrowserDialog1.SelectedPath = maskedIOBox.Text;
-            DialogResult result = folderBrowserDialog1.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                maskedIOBox.Text = folderBrowserDialog1.SelectedPath;
-            }
+            Plotter.PlotData(dataView, chartPhase, "Phase");
         }
         private void btnConnect_Click(object sender, EventArgs e)
         {
+            ConnectionHandler ComPort = new ConnectionHandler();
+
             // This method will connect to the Arduino and simply enable/disable buttons and change connectionInfo status strip
             try
             {  // This method will also create a new thread to read the data from the Arduino
                 if (btnConnect.Text == "Connect")
                 {
                     // Start a separate thread to read the data from the Arduino
-                    nanoPort = new SerialPort(cmbPort.Text, 9600);
+                    nanoPort = new SerialPort(cmbPort.Text, Convert.ToInt32(cmbBaud.Text));
                     nanoPort.ReadTimeout = 500;
                     nanoPort.Open();
-                    // Create a new thread to read the data from the Arduino
-                    serialReader = new Thread(new ThreadStart(ReadArduino));
-                    serialReader.Start();
-                    // Change the button text to "Disconnect"
                     btnConnect.Text = "Disconnect";
                     // Change the connectionInfo status strip
-                    connectionInfo.Text = "Connected to " + cmbPort.Text;
+                    connectionCOMInfo.Text = "Connected to " + cmbPort.Text;
+                    connectionCOMInfo.ForeColor = Color.Green;
                     // Disable the COM port select combo box and refresh button
                     cmbPort.Enabled = false;
+                    cmbBaud.Enabled = false;
                     buttonRefreshCOM.Enabled = false;
+                    buttonSample.Enabled = true;
+
+                    // Display the properties of the open serial port to the following labels:
+                    labelBaud.Text = "Baud rate: " + nanoPort.BaudRate;
+                    labelCOM.Text = "COM port: " + nanoPort.PortName;
+                    labelData.Text = "Data bits: " + nanoPort.DataBits;
+                    labelBuffer.Text = "Buffer size: " + nanoPort.ReadBufferSize;
                 }
                 else
                 {
@@ -140,12 +137,15 @@ namespace Filter_Frequency_Response_Visualizer
                     // Change the button text to "Connect"
                     btnConnect.Text = "Connect";
                     // Change the connectionInfo status strip
-                    connectionInfo.Text = "Not connected";
+                    connectionCOMInfo.Text = "Disconnected";
+                    connectionCOMInfo.ForeColor = Color.Red;
                     // Enable the COM port select combo box and refresh button
                     cmbPort.Enabled = true;
+                    cmbBaud.Enabled = true;
                     buttonRefreshCOM.Enabled = true;
+                    buttonSample.Enabled = false;
                     // Stop the thread
-                    serialReader.Abort();
+                    //serialReader.Abort();
                 }
             }
             catch (Exception ex)
@@ -154,8 +154,30 @@ namespace Filter_Frequency_Response_Visualizer
             }
         }
 
+        private void buttonSaveChart_Click(object sender, EventArgs e)
+        {
+            SaveFileHandler SavePlot = new SaveFileHandler();
+
+            // if tabPhase is selected, save phase chart
+            // if tabMagnitude is selected, save magnitude chart
+            if(tabControl.SelectedTab == tabPhase)
+            {
+                SavePlot.savePlotImage(chartPhase, "Phase");
+            } else if (tabControl.SelectedTab == tabMagnitude)
+            {
+                SavePlot.savePlotImage(chartMagnitude, "Magnitude");
+            } else
+            {
+                MessageBox.Show("Error");
+
+            }
+        }
 
         #endregion
 
+        private void cmbBaud_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -77,15 +77,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ColResize.cs" />
+    <Compile Include="ConnectionHandler.cs" />
     <Compile Include="InputDataProcessor.cs" />
+    <Compile Include="ListViewDataRand.cs" />
     <Compile Include="main.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="main.Designer.cs">
       <DependentUpon>main.cs</DependentUpon>
     </Compile>
+    <Compile Include="PlottingHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SaveFileHandler.cs" />
     <EmbeddedResource Include="main.resx">
       <DependentUpon>main.cs</DependentUpon>
     </EmbeddedResource>
