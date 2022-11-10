@@ -38,6 +38,8 @@ namespace Filter_Frequency_Response_Visualizer
             System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Title title2 = new System.Windows.Forms.DataVisualization.Charting.Title();
             this.groupBoxStart = new System.Windows.Forms.GroupBox();
+            this.buttonStopThread = new System.Windows.Forms.Button();
+            this.buttonThread = new System.Windows.Forms.Button();
             this.cmbBaud = new System.Windows.Forms.ComboBox();
             this.labelBuffer = new System.Windows.Forms.Label();
             this.labelData = new System.Windows.Forms.Label();
@@ -50,29 +52,34 @@ namespace Filter_Frequency_Response_Visualizer
             this.arduinoPort = new System.IO.Ports.SerialPort(this.components);
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPhase = new System.Windows.Forms.TabPage();
+            this.chartPhase = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.tabMagnitude = new System.Windows.Forms.TabPage();
+            this.chartMagnitude = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.connectionInfo = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolstripStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.connectionCOMInfo = new System.Windows.Forms.ToolStripStatusLabel();
+            this.threadInfo = new System.Windows.Forms.ToolStripStatusLabel();
             this.dataView = new System.Windows.Forms.ListView();
             this.timeHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.valueHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.buttonSample = new System.Windows.Forms.Button();
             this.buttonSaveChart = new System.Windows.Forms.Button();
-            this.chartPhase = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.chartMagnitude = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.lblTime = new System.Windows.Forms.Label();
             this.groupBoxStart.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.tabPhase.SuspendLayout();
-            this.tabMagnitude.SuspendLayout();
-            this.connectionInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartPhase)).BeginInit();
+            this.tabMagnitude.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartMagnitude)).BeginInit();
+            this.connectionInfo.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBoxStart
             // 
+            this.groupBoxStart.Controls.Add(this.lblTime);
+            this.groupBoxStart.Controls.Add(this.buttonStopThread);
+            this.groupBoxStart.Controls.Add(this.buttonThread);
             this.groupBoxStart.Controls.Add(this.cmbBaud);
             this.groupBoxStart.Controls.Add(this.labelBuffer);
             this.groupBoxStart.Controls.Add(this.labelData);
@@ -82,14 +89,36 @@ namespace Filter_Frequency_Response_Visualizer
             this.groupBoxStart.Controls.Add(this.saveButton);
             this.groupBoxStart.Controls.Add(this.btnConnect);
             this.groupBoxStart.Controls.Add(this.cmbPort);
-            this.groupBoxStart.Location = new System.Drawing.Point(15, 11);
-            this.groupBoxStart.Margin = new System.Windows.Forms.Padding(2);
+            this.groupBoxStart.Location = new System.Drawing.Point(22, 17);
             this.groupBoxStart.Name = "groupBoxStart";
-            this.groupBoxStart.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBoxStart.Size = new System.Drawing.Size(1201, 172);
+            this.groupBoxStart.Size = new System.Drawing.Size(1802, 265);
             this.groupBoxStart.TabIndex = 1;
             this.groupBoxStart.TabStop = false;
             this.groupBoxStart.Text = "Start / Stop";
+            // 
+            // buttonStopThread
+            // 
+            this.buttonStopThread.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
+            this.buttonStopThread.Location = new System.Drawing.Point(284, 123);
+            this.buttonStopThread.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.buttonStopThread.Name = "buttonStopThread";
+            this.buttonStopThread.Size = new System.Drawing.Size(226, 40);
+            this.buttonStopThread.TabIndex = 19;
+            this.buttonStopThread.Text = "Stop COM Thread";
+            this.buttonStopThread.UseVisualStyleBackColor = true;
+            this.buttonStopThread.Click += new System.EventHandler(this.buttonStopThread_Click);
+            // 
+            // buttonThread
+            // 
+            this.buttonThread.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
+            this.buttonThread.Location = new System.Drawing.Point(284, 74);
+            this.buttonThread.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.buttonThread.Name = "buttonThread";
+            this.buttonThread.Size = new System.Drawing.Size(226, 40);
+            this.buttonThread.TabIndex = 18;
+            this.buttonThread.Text = "Start COM thread";
+            this.buttonThread.UseVisualStyleBackColor = true;
+            this.buttonThread.Click += new System.EventHandler(this.buttonThread_Click);
             // 
             // cmbBaud
             // 
@@ -110,9 +139,10 @@ namespace Filter_Frequency_Response_Visualizer
             "115200",
             "128000",
             "256000"});
-            this.cmbBaud.Location = new System.Drawing.Point(134, 17);
+            this.cmbBaud.Location = new System.Drawing.Point(201, 26);
+            this.cmbBaud.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.cmbBaud.Name = "cmbBaud";
-            this.cmbBaud.Size = new System.Drawing.Size(57, 26);
+            this.cmbBaud.Size = new System.Drawing.Size(114, 37);
             this.cmbBaud.TabIndex = 16;
             this.cmbBaud.Text = "9600";
             this.cmbBaud.SelectedIndexChanged += new System.EventHandler(this.cmbBaud_SelectedIndexChanged);
@@ -120,45 +150,50 @@ namespace Filter_Frequency_Response_Visualizer
             // labelBuffer
             // 
             this.labelBuffer.AutoSize = true;
-            this.labelBuffer.Location = new System.Drawing.Point(13, 117);
+            this.labelBuffer.Location = new System.Drawing.Point(20, 180);
+            this.labelBuffer.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelBuffer.Name = "labelBuffer";
-            this.labelBuffer.Size = new System.Drawing.Size(59, 13);
+            this.labelBuffer.Size = new System.Drawing.Size(89, 20);
             this.labelBuffer.TabIndex = 15;
             this.labelBuffer.Text = "Buffer size:";
             // 
             // labelData
             // 
             this.labelData.AutoSize = true;
-            this.labelData.Location = new System.Drawing.Point(13, 96);
+            this.labelData.Location = new System.Drawing.Point(20, 148);
+            this.labelData.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelData.Name = "labelData";
-            this.labelData.Size = new System.Drawing.Size(52, 13);
+            this.labelData.Size = new System.Drawing.Size(77, 20);
             this.labelData.TabIndex = 14;
             this.labelData.Text = "Data bits:";
             // 
             // labelCOM
             // 
             this.labelCOM.AutoSize = true;
-            this.labelCOM.Location = new System.Drawing.Point(13, 74);
+            this.labelCOM.Location = new System.Drawing.Point(20, 114);
+            this.labelCOM.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelCOM.Name = "labelCOM";
-            this.labelCOM.Size = new System.Drawing.Size(55, 13);
+            this.labelCOM.Size = new System.Drawing.Size(81, 20);
             this.labelCOM.TabIndex = 13;
             this.labelCOM.Text = "COM port:";
             // 
             // labelBaud
             // 
             this.labelBaud.AutoSize = true;
-            this.labelBaud.Location = new System.Drawing.Point(12, 51);
+            this.labelBaud.Location = new System.Drawing.Point(18, 78);
+            this.labelBaud.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelBaud.Name = "labelBaud";
-            this.labelBaud.Size = new System.Drawing.Size(56, 13);
+            this.labelBaud.Size = new System.Drawing.Size(83, 20);
             this.labelBaud.TabIndex = 12;
             this.labelBaud.Text = "Baud rate:";
             // 
             // buttonRefreshCOM
             // 
             this.buttonRefreshCOM.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.buttonRefreshCOM.Location = new System.Drawing.Point(293, 17);
+            this.buttonRefreshCOM.Location = new System.Drawing.Point(474, 26);
+            this.buttonRefreshCOM.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.buttonRefreshCOM.Name = "buttonRefreshCOM";
-            this.buttonRefreshCOM.Size = new System.Drawing.Size(24, 26);
+            this.buttonRefreshCOM.Size = new System.Drawing.Size(36, 40);
             this.buttonRefreshCOM.TabIndex = 11;
             this.buttonRefreshCOM.Text = "⟳";
             this.buttonRefreshCOM.UseVisualStyleBackColor = true;
@@ -167,9 +202,10 @@ namespace Filter_Frequency_Response_Visualizer
             // saveButton
             // 
             this.saveButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.saveButton.Location = new System.Drawing.Point(14, 135);
+            this.saveButton.Location = new System.Drawing.Point(21, 208);
+            this.saveButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.saveButton.Name = "saveButton";
-            this.saveButton.Size = new System.Drawing.Size(303, 32);
+            this.saveButton.Size = new System.Drawing.Size(489, 49);
             this.saveButton.TabIndex = 9;
             this.saveButton.Text = "Save Data";
             this.saveButton.UseVisualStyleBackColor = true;
@@ -178,10 +214,9 @@ namespace Filter_Frequency_Response_Visualizer
             // btnConnect
             // 
             this.btnConnect.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
-            this.btnConnect.Location = new System.Drawing.Point(196, 17);
-            this.btnConnect.Margin = new System.Windows.Forms.Padding(2);
+            this.btnConnect.Location = new System.Drawing.Point(321, 26);
             this.btnConnect.Name = "btnConnect";
-            this.btnConnect.Size = new System.Drawing.Size(97, 26);
+            this.btnConnect.Size = new System.Drawing.Size(146, 40);
             this.btnConnect.TabIndex = 3;
             this.btnConnect.Text = "Connect";
             this.btnConnect.UseVisualStyleBackColor = true;
@@ -191,10 +226,9 @@ namespace Filter_Frequency_Response_Visualizer
             // 
             this.cmbPort.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
             this.cmbPort.FormattingEnabled = true;
-            this.cmbPort.Location = new System.Drawing.Point(14, 17);
-            this.cmbPort.Margin = new System.Windows.Forms.Padding(2);
+            this.cmbPort.Location = new System.Drawing.Point(21, 26);
             this.cmbPort.Name = "cmbPort";
-            this.cmbPort.Size = new System.Drawing.Size(115, 26);
+            this.cmbPort.Size = new System.Drawing.Size(170, 34);
             this.cmbPort.TabIndex = 2;
             this.cmbPort.Text = "Select a port...";
             // 
@@ -208,11 +242,10 @@ namespace Filter_Frequency_Response_Visualizer
             this.tabControl.Controls.Add(this.tabMagnitude);
             this.tabControl.ImeMode = System.Windows.Forms.ImeMode.Hiragana;
             this.tabControl.ItemSize = new System.Drawing.Size(100, 30);
-            this.tabControl.Location = new System.Drawing.Point(8, 197);
-            this.tabControl.Margin = new System.Windows.Forms.Padding(2);
+            this.tabControl.Location = new System.Drawing.Point(12, 303);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(1029, 581);
+            this.tabControl.Size = new System.Drawing.Size(1544, 894);
             this.tabControl.TabIndex = 5;
             // 
             // tabPhase
@@ -220,26 +253,56 @@ namespace Filter_Frequency_Response_Visualizer
             this.tabPhase.Controls.Add(this.chartPhase);
             this.tabPhase.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.tabPhase.Location = new System.Drawing.Point(4, 34);
-            this.tabPhase.Margin = new System.Windows.Forms.Padding(2);
             this.tabPhase.Name = "tabPhase";
-            this.tabPhase.Padding = new System.Windows.Forms.Padding(2);
-            this.tabPhase.Size = new System.Drawing.Size(1021, 543);
+            this.tabPhase.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tabPhase.Size = new System.Drawing.Size(1536, 856);
             this.tabPhase.TabIndex = 0;
             this.tabPhase.Text = "Phase";
             this.tabPhase.UseVisualStyleBackColor = true;
+            // 
+            // chartPhase
+            // 
+            chartArea1.Name = "ChartArea1";
+            this.chartPhase.ChartAreas.Add(chartArea1);
+            legend1.Name = "Phase";
+            this.chartPhase.Legends.Add(legend1);
+            this.chartPhase.Location = new System.Drawing.Point(8, 8);
+            this.chartPhase.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chartPhase.Name = "chartPhase";
+            this.chartPhase.Size = new System.Drawing.Size(1516, 820);
+            this.chartPhase.TabIndex = 1;
+            this.chartPhase.Text = "Phase Chart";
+            title1.Name = "Title1";
+            title1.Text = "Phase Chart";
+            this.chartPhase.Titles.Add(title1);
             // 
             // tabMagnitude
             // 
             this.tabMagnitude.Controls.Add(this.chartMagnitude);
             this.tabMagnitude.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
             this.tabMagnitude.Location = new System.Drawing.Point(4, 34);
-            this.tabMagnitude.Margin = new System.Windows.Forms.Padding(2);
             this.tabMagnitude.Name = "tabMagnitude";
-            this.tabMagnitude.Padding = new System.Windows.Forms.Padding(2);
-            this.tabMagnitude.Size = new System.Drawing.Size(1021, 543);
+            this.tabMagnitude.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tabMagnitude.Size = new System.Drawing.Size(1536, 856);
             this.tabMagnitude.TabIndex = 1;
             this.tabMagnitude.Text = "Magnitude";
             this.tabMagnitude.UseVisualStyleBackColor = true;
+            // 
+            // chartMagnitude
+            // 
+            chartArea2.Name = "ChartArea1";
+            this.chartMagnitude.ChartAreas.Add(chartArea2);
+            legend2.Name = "Magnitude";
+            this.chartMagnitude.Legends.Add(legend2);
+            this.chartMagnitude.Location = new System.Drawing.Point(8, 8);
+            this.chartMagnitude.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chartMagnitude.Name = "chartMagnitude";
+            this.chartMagnitude.Size = new System.Drawing.Size(1516, 820);
+            this.chartMagnitude.TabIndex = 0;
+            this.chartMagnitude.Text = "Magnitude Chart";
+            title2.Name = "Title1";
+            title2.Text = "Magnitude Chart";
+            this.chartMagnitude.Titles.Add(title2);
             // 
             // connectionInfo
             // 
@@ -247,29 +310,36 @@ namespace Filter_Frequency_Response_Visualizer
             this.connectionInfo.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1,
             this.toolstripStatus,
-            this.connectionCOMInfo});
-            this.connectionInfo.Location = new System.Drawing.Point(0, 832);
+            this.connectionCOMInfo,
+            this.threadInfo});
+            this.connectionInfo.Location = new System.Drawing.Point(0, 1273);
             this.connectionInfo.Name = "connectionInfo";
-            this.connectionInfo.Padding = new System.Windows.Forms.Padding(1, 0, 9, 0);
-            this.connectionInfo.Size = new System.Drawing.Size(1227, 22);
+            this.connectionInfo.Padding = new System.Windows.Forms.Padding(2, 0, 14, 0);
+            this.connectionInfo.Size = new System.Drawing.Size(1840, 32);
             this.connectionInfo.TabIndex = 6;
             this.connectionInfo.Text = "connectionInfo";
             // 
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 25);
             // 
             // toolstripStatus
             // 
             this.toolstripStatus.Name = "toolstripStatus";
-            this.toolstripStatus.Size = new System.Drawing.Size(0, 17);
+            this.toolstripStatus.Size = new System.Drawing.Size(0, 25);
             // 
             // connectionCOMInfo
             // 
             this.connectionCOMInfo.Name = "connectionCOMInfo";
-            this.connectionCOMInfo.Size = new System.Drawing.Size(109, 17);
+            this.connectionCOMInfo.Size = new System.Drawing.Size(164, 25);
             this.connectionCOMInfo.Text = "Connect to a port...";
+            // 
+            // threadInfo
+            // 
+            this.threadInfo.Name = "threadInfo";
+            this.threadInfo.Size = new System.Drawing.Size(146, 25);
+            this.threadInfo.Text = "Thread Running: ";
             // 
             // dataView
             // 
@@ -282,9 +352,10 @@ namespace Filter_Frequency_Response_Visualizer
             this.dataView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.dataView.HideSelection = false;
             this.dataView.LabelWrap = false;
-            this.dataView.Location = new System.Drawing.Point(1042, 231);
+            this.dataView.Location = new System.Drawing.Point(1563, 355);
+            this.dataView.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.dataView.Name = "dataView";
-            this.dataView.Size = new System.Drawing.Size(175, 547);
+            this.dataView.Size = new System.Drawing.Size(260, 839);
             this.dataView.TabIndex = 7;
             this.dataView.UseCompatibleStateImageBehavior = false;
             this.dataView.View = System.Windows.Forms.View.Details;
@@ -302,10 +373,10 @@ namespace Filter_Frequency_Response_Visualizer
             // 
             // buttonSample
             // 
-            this.buttonSample.Enabled = false;
-            this.buttonSample.Location = new System.Drawing.Point(1042, 784);
+            this.buttonSample.Location = new System.Drawing.Point(1563, 1206);
+            this.buttonSample.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.buttonSample.Name = "buttonSample";
-            this.buttonSample.Size = new System.Drawing.Size(175, 35);
+            this.buttonSample.Size = new System.Drawing.Size(262, 54);
             this.buttonSample.TabIndex = 8;
             this.buttonSample.Text = "Plot Data";
             this.buttonSample.UseVisualStyleBackColor = true;
@@ -314,49 +385,29 @@ namespace Filter_Frequency_Response_Visualizer
             // buttonSaveChart
             // 
             this.buttonSaveChart.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
-            this.buttonSaveChart.Location = new System.Drawing.Point(874, 784);
+            this.buttonSaveChart.Location = new System.Drawing.Point(1311, 1206);
+            this.buttonSaveChart.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.buttonSaveChart.Name = "buttonSaveChart";
-            this.buttonSaveChart.Size = new System.Drawing.Size(159, 35);
+            this.buttonSaveChart.Size = new System.Drawing.Size(238, 54);
             this.buttonSaveChart.TabIndex = 9;
             this.buttonSaveChart.Text = "Save Current Chart";
             this.buttonSaveChart.UseVisualStyleBackColor = true;
             this.buttonSaveChart.Click += new System.EventHandler(this.buttonSaveChart_Click);
             // 
-            // chartPhase
+            // lblTime
             // 
-            chartArea1.Name = "ChartArea1";
-            this.chartPhase.ChartAreas.Add(chartArea1);
-            legend1.Name = "Phase";
-            this.chartPhase.Legends.Add(legend1);
-            this.chartPhase.Location = new System.Drawing.Point(5, 5);
-            this.chartPhase.Name = "chartPhase";
-            this.chartPhase.Size = new System.Drawing.Size(1011, 533);
-            this.chartPhase.TabIndex = 1;
-            this.chartPhase.Text = "Phase Chart";
-            title1.Name = "Title1";
-            title1.Text = "Phase Chart";
-            this.chartPhase.Titles.Add(title1);
-            // 
-            // chartMagnitude
-            // 
-            chartArea2.Name = "ChartArea1";
-            this.chartMagnitude.ChartAreas.Add(chartArea2);
-            legend2.Name = "Magnitude";
-            this.chartMagnitude.Legends.Add(legend2);
-            this.chartMagnitude.Location = new System.Drawing.Point(5, 5);
-            this.chartMagnitude.Name = "chartMagnitude";
-            this.chartMagnitude.Size = new System.Drawing.Size(1011, 533);
-            this.chartMagnitude.TabIndex = 0;
-            this.chartMagnitude.Text = "Magnitude Chart";
-            title2.Name = "Title1";
-            title2.Text = "Magnitude Chart";
-            this.chartMagnitude.Titles.Add(title2);
+            this.lblTime.AutoSize = true;
+            this.lblTime.Location = new System.Drawing.Point(828, 53);
+            this.lblTime.Name = "lblTime";
+            this.lblTime.Size = new System.Drawing.Size(43, 20);
+            this.lblTime.TabIndex = 20;
+            this.lblTime.Text = "Time";
             // 
             // homeForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1227, 854);
+            this.ClientSize = new System.Drawing.Size(1840, 1305);
             this.Controls.Add(this.buttonSaveChart);
             this.Controls.Add(this.buttonSample);
             this.Controls.Add(this.dataView);
@@ -364,7 +415,6 @@ namespace Filter_Frequency_Response_Visualizer
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.groupBoxStart);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
-            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "homeForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Filter Frequency Response Visualizer";
@@ -373,11 +423,11 @@ namespace Filter_Frequency_Response_Visualizer
             this.groupBoxStart.PerformLayout();
             this.tabControl.ResumeLayout(false);
             this.tabPhase.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.chartPhase)).EndInit();
             this.tabMagnitude.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.chartMagnitude)).EndInit();
             this.connectionInfo.ResumeLayout(false);
             this.connectionInfo.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.chartPhase)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.chartMagnitude)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -409,6 +459,10 @@ namespace Filter_Frequency_Response_Visualizer
         private System.Windows.Forms.ComboBox cmbBaud;
         private System.Windows.Forms.DataVisualization.Charting.Chart chartPhase;
         private System.Windows.Forms.DataVisualization.Charting.Chart chartMagnitude;
+        private System.Windows.Forms.Button buttonThread;
+        private System.Windows.Forms.ToolStripStatusLabel threadInfo;
+        private System.Windows.Forms.Button buttonStopThread;
+        private System.Windows.Forms.Label lblTime;
     }
 }
 

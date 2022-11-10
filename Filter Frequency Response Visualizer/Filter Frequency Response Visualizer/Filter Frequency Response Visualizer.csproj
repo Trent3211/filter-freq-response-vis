@@ -77,10 +77,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ColResize.cs" />
     <Compile Include="ConnectionHandler.cs" />
     <Compile Include="InputDataProcessor.cs" />
-    <Compile Include="ListViewDataRand.cs" />
+    <Compile Include="RandDataHandler.cs" />
     <Compile Include="main.cs">
       <SubType>Form</SubType>
     </Compile>

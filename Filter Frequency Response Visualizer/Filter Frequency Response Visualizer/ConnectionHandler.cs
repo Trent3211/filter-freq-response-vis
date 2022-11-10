@@ -3,23 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.IO.Ports;
-using System.Threading;
-
+using System.Windows.Forms;
 
 namespace Filter_Frequency_Response_Visualizer
 {
     public class ConnectionHandler
     {
-        // Create a method that will start a separate thread to open the Serial Port
-        public void openSerialPort(SerialPort nanoPort)
+        public void ComPortConnector(ComboBox cmbPort)
         {
-            // Create a new thread to open the serial port
-            Thread openPort = new Thread(() => nanoPort.Open());
+            string[] ports = SerialPort.GetPortNames();
+            cmbPort.Items.AddRange(ports);
+        }
 
-            // Start the thread
-            openPort.Start();
+        public void OpenPort(SerialPort serialPort, ComboBox cmbPort, ComboBox cmbBaud)
+        {
+            serialPort = new SerialPort(cmbPort.Text, Convert.ToInt32(cmbBaud.Text));
+            serialPort.ReadTimeout = 500;
+            serialPort.Open();
+        }
+
+        public void ClosePort(SerialPort serialPort)
+        {
+            serialPort.Close();
         }
     }
 }

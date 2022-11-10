@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO.Ports;
 using System.Threading;
 using System.Windows.Forms;
-using LiveCharts;
 
 namespace Filter_Frequency_Response_Visualizer
 {
@@ -14,72 +14,45 @@ namespace Filter_Frequency_Response_Visualizer
         public bool endOfData = false;
         public List<string> inputStringList = new List<string>();
 
-        public SerialPort nanoPort;
-
-        //Thread serialReader;
-        ListViewDataRand Populate = new ListViewDataRand();
-        SeriesCollection series = new SeriesCollection();
+        Thread testing;
+        RandDataHandler Populate = new RandDataHandler();
+        //SeriesCollection series = new SeriesCollection();
         SaveFileHandler SaveCSV = new SaveFileHandler();
         PlottingHandler Plotter = new PlottingHandler();
+        ConnectionHandler ComPorts = new ConnectionHandler();
 
 
         #endregion
 
-        #region Main Form Initializer
+        #region Form Initializer
         public homeForm()
         {
             InitializeComponent();
         }
         #endregion
 
-        #region Main Form Load
+        #region Form Load
         private void homeForm_Load(object sender, EventArgs e)
         {
             Populate.populateListView(dataView);
-            //phaseChart.LegendLocation = LegendLocation.Bottom;
-            //magnitudeChart.LegendLocation = LegendLocation.Bottom;
-            loadComPorts();
+            ComPorts.ComPortConnector(cmbPort);
+            
         }
-
-        #endregion
-
-        #region DOCS
-
-        #endregion
-
-        #region TODO
 
         #endregion
 
         #region Methods
-        private void loadComPorts()
+        // Create a random thread job method
+        public void RandomThreadJob()
         {
-            string[] ports = SerialPort.GetPortNames();
-            cmbPort.Items.AddRange(ports);
-        }
-
-        private void ReadArduino()
-        {
-            while (!endOfData)
+            // Increment lblTime
+            lblTime.Text = "0";
+            int time = 0;
+            while (endOfData == false)
             {
-                try
-                {
-                    string inputString = nanoPort.ReadLine();
-
-                    if (inputString.TrimEnd('\r', '\n') == "END")
-                    {
-                        endOfData = true;
-                    }
-                    else
-                    {
-                        inputStringList.Add(inputString);
-                        dataView.Invoke(new MethodInvoker(delegate { dataView.Text = inputString; }));
-                    }
-                }
-                catch (TimeoutException)
-                {
-                    MessageBox.Show("Timeout Exception");
-                }
+                time++;
+                lblTime.Text = time.ToString();
+                Thread.Sleep(100);
             }
         }
         #endregion
@@ -94,7 +67,7 @@ namespace Filter_Frequency_Response_Visualizer
         private void buttonRefreshCOM_Click(object sender, EventArgs e)
         {
             cmbPort.Items.Clear();
-            loadComPorts();
+            ComPorts.ComPortConnector(cmbPort);
         }
 
         private void buttonData_Click(object sender, EventArgs e)
@@ -103,17 +76,16 @@ namespace Filter_Frequency_Response_Visualizer
         }
         private void btnConnect_Click(object sender, EventArgs e)
         {
-            ConnectionHandler ComPort = new ConnectionHandler();
 
             // This method will connect to the Arduino and simply enable/disable buttons and change connectionInfo status strip
             try
             {  // This method will also create a new thread to read the data from the Arduino
                 if (btnConnect.Text == "Connect")
                 {
-                    // Start a separate thread to read the data from the Arduino
-                    nanoPort = new SerialPort(cmbPort.Text, Convert.ToInt32(cmbBaud.Text));
-                    nanoPort.ReadTimeout = 500;
-                    nanoPort.Open();
+                    // Open Handler
+                    ComPorts.OpenPort(arduinoPort, cmbPort, cmbBaud);
+
+
                     btnConnect.Text = "Disconnect";
                     // Change the connectionInfo status strip
                     connectionCOMInfo.Text = "Connected to " + cmbPort.Text;
@@ -124,16 +96,19 @@ namespace Filter_Frequency_Response_Visualizer
                     buttonRefreshCOM.Enabled = false;
                     buttonSample.Enabled = true;
 
+                    // Display if serialReader thread is running on labelThread
+                    //labelThread.Text = "Thread Running: " + thread.IsAlive.ToString();
+
                     // Display the properties of the open serial port to the following labels:
-                    labelBaud.Text = "Baud rate: " + nanoPort.BaudRate;
-                    labelCOM.Text = "COM port: " + nanoPort.PortName;
-                    labelData.Text = "Data bits: " + nanoPort.DataBits;
-                    labelBuffer.Text = "Buffer size: " + nanoPort.ReadBufferSize;
+                    labelBaud.Text = "Baud rate: " + arduinoPort.BaudRate;
+                    labelCOM.Text = "COM port: " + arduinoPort.PortName;
+                    labelData.Text = "Data bits: " + arduinoPort.DataBits;
+                    labelBuffer.Text = "Buffer size: " +    arduinoPort.ReadBufferSize;
                 }
                 else
                 {
-                    // Close the serial port
-                    nanoPort.Close();
+                    // Close Handler
+                    ComPorts.ClosePort(arduinoPort);
                     // Change the button text to "Connect"
                     btnConnect.Text = "Connect";
                     // Change the connectionInfo status strip
@@ -144,8 +119,8 @@ namespace Filter_Frequency_Response_Visualizer
                     cmbBaud.Enabled = true;
                     buttonRefreshCOM.Enabled = true;
                     buttonSample.Enabled = false;
-                    // Stop the thread
-                    //serialReader.Abort();
+                    //thread.Abort();
+                    
                 }
             }
             catch (Exception ex)
@@ -168,7 +143,7 @@ namespace Filter_Frequency_Response_Visualizer
                 SavePlot.savePlotImage(chartMagnitude, "Magnitude");
             } else
             {
-                MessageBox.Show("Error");
+                MessageBox.Show("Please select a tab to save the chart from.");
 
             }
         }
@@ -178,6 +153,34 @@ namespace Filter_Frequency_Response_Visualizer
         private void cmbBaud_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        public void buttonThread_Click(object sender, EventArgs e)
+        {
+            testing = new Thread(RandomThreadJob);
+            // If testing thread is running, abort it before starting another
+            if (testing.IsAlive)
+            {
+
+                testing.Abort();
+                threadInfo.Text = "Thread Running: " + testing.IsAlive.ToString();
+            }
+            else
+            {
+                // Start the testing thread
+                testing.Start();
+                // Update how many threads are running in the program at threadInfo
+                threadInfo.Text = "Thread Running: " + testing.IsAlive.ToString();
+                //threadInfo.Text = "Threads Running: " + Process.GetCurrentProcess().Threads.Count.ToString();
+            }
+        }
+
+        public void buttonStopThread_Click(object sender, EventArgs e)
+        {
+            testing.Abort();
+            // Update how many threads are running in the program at threadInfo
+            threadInfo.Text = "Thread Running: " + testing.IsAlive.ToString();
+            //threadInfo.Text = "Threads Running: " + Process.GetCurrentProcess().Threads.Count.ToString();
         }
     }
 }

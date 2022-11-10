@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace Filter_Frequency_Response_Visualizer
 {
-    internal class ListViewDataRand
+    internal class RandDataHandler
     {
         // Create a method that will generate 10000 random numbers per column (2 columns) and add them to the list view
         // Have a parameter that will accept the list view to be populated
@@ -23,7 +23,7 @@ namespace Filter_Frequency_Response_Visualizer
             string[] itemArray = new string[2];
 
             // Create a for loop that will generate 10000 random numbers per column (2 columns) and add them to the list view
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 1000; i++)
             {
                 // Generate a random number
                 itemArray[1] = rand.Next(0, 10000).ToString();
