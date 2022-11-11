@@ -79,7 +79,7 @@
   <ItemGroup>
     <Compile Include="ConnectionHandler.cs" />
     <Compile Include="InputDataProcessor.cs" />
-    <Compile Include="RandDataHandler.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="main.cs">
       <SubType>Form</SubType>
     </Compile>

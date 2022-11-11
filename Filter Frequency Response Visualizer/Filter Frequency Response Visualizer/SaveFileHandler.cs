@@ -1,8 +1,5 @@
-﻿using LiveCharts.WinForms;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -15,7 +12,7 @@ namespace Filter_Frequency_Response_Visualizer
         // this save file method will have two parameters, the chart and tab
         public void savePlotImage(Chart chart, String Name)
         {
-            
+
             // Set the default file name
             saveFile.FileName = Name;
 
@@ -33,7 +30,7 @@ namespace Filter_Frequency_Response_Visualizer
             chart.DrawToBitmap(bmp, new Rectangle(0, 0, bmp.Width, bmp.Height));
             bmp.Save(saveFile.FileName);
         }
-            // Create a method that will take the two columns of data from the list view and save them to a csv file.
+        // Create a method that will take the two columns of data from the list view and save them to a csv file.
         public void saveCSV(ListView ListView)
         {
             // Create a new save file dialog

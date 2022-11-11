@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO.Ports;
 using System.Windows.Forms;
 
@@ -23,7 +19,7 @@ namespace Filter_Frequency_Response_Visualizer
             serialPort.Open();
         }
 
-        public void ClosePort(SerialPort serialPort)
+        public void ClosePort(SerialPort serialPort, ComboBox cmbPort, ComboBox cmbBaud)
         {
             serialPort.Close();
         }
