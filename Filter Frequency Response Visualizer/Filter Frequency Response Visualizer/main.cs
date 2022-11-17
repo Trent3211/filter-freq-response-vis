@@ -45,9 +45,17 @@ namespace Filter_Frequency_Response_Visualizer
         #region Form Load
         private void homeForm_Load(object sender, EventArgs e)
         {
-            ComPorts.ComPortConnector(cmbPort); // Populate the combobox with available COM ports
-            cmbBaud.SelectedIndex = 6; // Default to 9600
-            cmbPort.SelectedIndex = 0; // Default to the first index item
+            // Write a conditional if a com port is available
+            if (SerialPort.GetPortNames().Length > 0)
+            {
+                ComPorts.ComPortConnector(cmbPort);
+                cmbPort.SelectedIndex = 0;
+                cmbBaud.SelectedIndex = 6;
+            }
+            else
+            {
+                MessageBox.Show("No COM ports available. Please connect a device and restart the program.");
+            }
         }
 
         #endregion
@@ -110,14 +118,17 @@ namespace Filter_Frequency_Response_Visualizer
                         string[] inputStringArray = inputString.Split(',');
                         ListViewItem item = new ListViewItem(inputStringArray[0]);
                         item.SubItems.Add(inputStringArray[1]);
+                        item.SubItems.Add(inputStringArray[2]);
                         dataView.Items.Add(item);
                     }
                 }
             }
             catch (Exception ex)
             {
-                // Suppress exceptions
-                
+                // Create the error message
+/*                string errorMessage = "Error: " + ex.Message;
+                MessageBox.Show("Error", errorMessage);*/
+
             }
         }
 
@@ -133,6 +144,7 @@ namespace Filter_Frequency_Response_Visualizer
         {
             cmbPort.Items.Clear();
             ComPorts.ComPortConnector(cmbPort);
+            cmbPort.SelectedIndex = 0;
         }
         private void buttonData_Click(object sender, EventArgs e)
         {
@@ -262,16 +274,18 @@ namespace Filter_Frequency_Response_Visualizer
             if (arduinoPort.IsOpen)
             {
 
-
-                AcquireArduinoData();
                 chartPhase.Series.Clear();
-                Plotter.PlotData(dataView, chartPhase, "Phase");
-                Log.LogData(rtbLog, "Phase Data Plotted.");
+                chartMagnitude.Series.Clear();
+                AcquireArduinoData();
+                Plotter.PlotDataPhase(dataView, chartPhase, "Value 1");
+                Plotter.PlotDataMag(dataView, chartMagnitude, "Value 2");
+                Log.LogData(rtbLog, "Value 1 Data Plotted.");
+                Log.LogData(rtbLog, "Value 2 Data Plotted.");
                 endOfData = false;
             }
             else
             {
-                MessageBox.Show("Please connect to a device first.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Please check your connection before attempting to acquire data.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         #endregion

@@ -39,6 +39,9 @@ namespace Filter_Frequency_Response_Visualizer
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Title title4 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.Title title5 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.Title title6 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(homeForm));
             this.groupBoxStart = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.rtbLog = new System.Windows.Forms.RichTextBox();
@@ -68,6 +71,7 @@ namespace Filter_Frequency_Response_Visualizer
             this.dataView = new System.Windows.Forms.ListView();
             this.timeHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.valuePhase = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.valueMagnitude = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.buttonSaveChart = new System.Windows.Forms.Button();
             this.buttonAcquire = new System.Windows.Forms.Button();
             this.arduinoPort = new System.IO.Ports.SerialPort(this.components);
@@ -102,7 +106,7 @@ namespace Filter_Frequency_Response_Visualizer
             this.groupBoxStart.Size = new System.Drawing.Size(1201, 172);
             this.groupBoxStart.TabIndex = 1;
             this.groupBoxStart.TabStop = false;
-            this.groupBoxStart.Text = "Start / Stop";
+            this.groupBoxStart.Text = "Connection Handling";
             // 
             // groupBox2
             // 
@@ -353,16 +357,25 @@ namespace Filter_Frequency_Response_Visualizer
             // 
             chartArea2.Name = "ChartArea1";
             this.chartMagnitude.ChartAreas.Add(chartArea2);
-            legend2.Name = "Magnitude";
+            legend2.Name = "Voltage / Time";
             this.chartMagnitude.Legends.Add(legend2);
             this.chartMagnitude.Location = new System.Drawing.Point(5, 5);
             this.chartMagnitude.Name = "chartMagnitude";
+            this.chartMagnitude.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.Fire;
             this.chartMagnitude.Size = new System.Drawing.Size(937, 533);
             this.chartMagnitude.TabIndex = 0;
             this.chartMagnitude.Text = "Magnitude Chart";
             title4.Name = "Title1";
             title4.Text = "Magnitude Chart";
+            title5.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
+            title5.Name = "Title2";
+            title5.Text = "Time";
+            title6.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Left;
+            title6.Name = "Title3";
+            title6.Text = "Voltage";
             this.chartMagnitude.Titles.Add(title4);
+            this.chartMagnitude.Titles.Add(title5);
+            this.chartMagnitude.Titles.Add(title6);
             // 
             // connectionInfo
             // 
@@ -402,7 +415,8 @@ namespace Filter_Frequency_Response_Visualizer
             this.dataView.Alignment = System.Windows.Forms.ListViewAlignment.Left;
             this.dataView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.timeHeader,
-            this.valuePhase});
+            this.valuePhase,
+            this.valueMagnitude});
             this.dataView.FullRowSelect = true;
             this.dataView.GridLines = true;
             this.dataView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
@@ -424,7 +438,12 @@ namespace Filter_Frequency_Response_Visualizer
             // 
             this.valuePhase.Text = "Value 1";
             this.valuePhase.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.valuePhase.Width = 80;
+            this.valuePhase.Width = 90;
+            // 
+            // valueMagnitude
+            // 
+            this.valueMagnitude.Text = "Value 2";
+            this.valueMagnitude.Width = 90;
             // 
             // buttonSaveChart
             // 
@@ -451,6 +470,7 @@ namespace Filter_Frequency_Response_Visualizer
             // arduinoPort
             // 
             this.arduinoPort.PortName = "COM7";
+            this.arduinoPort.ReadBufferSize = 4095;
             this.arduinoPort.WriteBufferSize = 4096;
             // 
             // homeForm
@@ -466,6 +486,7 @@ namespace Filter_Frequency_Response_Visualizer
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.groupBoxStart);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "homeForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -521,6 +542,7 @@ namespace Filter_Frequency_Response_Visualizer
         private System.IO.Ports.SerialPort arduinoPort;
         private System.Windows.Forms.ToolStripProgressBar barThread;
         private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.ColumnHeader valueMagnitude;
     }
 }
 
