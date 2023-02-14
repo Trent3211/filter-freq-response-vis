@@ -11,21 +11,25 @@ dpg.create_context()
 
 sindatax = []
 sindatay = []
-for i in range(0, 100):
+for i in range(0, 100000):
     sindatax.append(i / 100)
     sindatay.append(0.5 + 0.5 * sin(i / 100))
 
 tandatax = []
 tandatay = []
-for i in range(0, 100):
+for i in range(0, 100000):
     tandatax.append(i / 100)
     tandatay.append(0.5 + 0.5 * cos(i / 100)) 
-    #endregion
+#     #endregion
 
     #region Functions
 def print_me(sender):
     # Write to the terminal
     print(f"[DEBUG] Object action: ", sender) 
+
+def _hyperlink(text, address):
+    b = dpg.add_button(label=text, callback=lambda:webbrowser.open(address))
+    dpg.bind_item_theme(b, "__demo_hyperlinkTheme")
 
 
     #endregion
@@ -36,6 +40,10 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0)):
     with dpg.menu_bar():
         with dpg.menu(label="File"):
             dpg.add_menu_item(label="Exit", callback=print_me)
+
+        with dpg.menu(label="Sweep"):
+            dpg.add_menu_item(label="Begin sweep", callback=print_me)
+            dpg.add_menu_item(label="Stop sweep", callback=print_me)
         
         with dpg.menu(label="Screenshot"):
             dpg.add_menu_item(label="Save Plot Bitmap", callback=print_me)
@@ -46,7 +54,6 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0)):
         
         with dpg.menu(label="Help"):
             dpg.add_menu_item(label="Plotting Documentation", callback=print_me)
-            dpg.add_menu_item(label="Github Repository", callback=print_me)
             dpg.add_menu_item(label="About", callback=print_me)
 
     #endregion
@@ -105,27 +112,25 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0)):
     with dpg.child_window(label="Object Window", width=1424, height=210, pos=(6, 744), menubar=True):
         with dpg.menu_bar():
              dpg.add_menu(label="Activity Logger")
-             dpg.add_button(label="Clear", callback=print_me)
-    
-    # Create the main textbox for the logger, no title.
-        dpg.add_text("[ACTIVITY] Main form loaded", tag="Logger", wrap=1424)
+             dpg.add_button(label="Clear Logger", callback=print_me)
 
 
              
     #endregion
 
-    #region Plotting Window
-    with dpg.plot(label="Phase / Magnitude Series", height=700, width=1100, pos=(330, 40)):
+    #region Plots
+    with dpg.plot(label="Phase Series", height=346, width=1100, pos=(330, 42)):
     # optionally create legend
         dpg.add_plot_legend()
 
         # REQUIRED: create x and y axes
         dpg.add_plot_axis(dpg.mvXAxis, label="x_1")
         dpg.add_plot_axis(dpg.mvYAxis, label="y_1", tag="y_axis_1")
-
+ 
         # series belong to a y axis
         dpg.add_line_series(sindatax, sindatay, label="Phase", parent="y_axis_1")
 
+    with dpg.plot(label="Magnitude Series", height=346, width=1100, pos=(330, 394)):
         # optionally create legend
         dpg.add_plot_legend()
 
