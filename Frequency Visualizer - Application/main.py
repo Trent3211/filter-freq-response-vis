@@ -37,7 +37,7 @@ def create_ui(portName_input, baud_rate_input, bytesize_input, stop_bits_input, 
         return dpg.get_value(parity_input)
 
     def on_connect_button():
-    # Open the serial port
+        global ser  # Make the ser object global so that it can be used in other functions
         try:
             ser = serial.Serial(
                 port=get_portName(),
@@ -47,44 +47,22 @@ def create_ui(portName_input, baud_rate_input, bytesize_input, stop_bits_input, 
                 parity=get_parity(),
                 timeout=0.5
             )
-            print("Connected to serial port:", ser.name)
+            print("Connected to serial port:", ser.name, "at", ser.baudrate, "baud", ser.bytesize, "data bits", ser.stopbits, "stop bits", ser.parity, "parity")
+            dpg.set_value(connection_status, "Connected")
         except SerialException:
             print(f"Error connecting to device: Serial port {get_portName()} is not available")
-            return
-
-        # Send the sweep signal to the device
-        signal = "s 20 30000 10 1000"
-        ser.write(signal.encode())
-        print("Sent signal:", signal)
-
-# Loop to receive and print data
-        while True:
-            # Read a line from the serial port
-            line = ser.readline()
-            
-            # Print the received data in hex format
-            print("Received data:", " ".join(hex(b)[2:].zfill(2) for b in line))
-
-            # If the data is the end of sweep message, break out of the loop
-            if b"End of sweep" in line:
-                print("End of sweep")
-                break
-
-    # Sleep to avoid overloading the CPU
-            time.sleep(0.01)
-
-
-        # Close the serial port
-        ser.close()
-        print("Disconnected from serial port:", ser.name)
-
-
-
-
-
+            return 
 
     def on_disconnect_button():
-        dpg.configure_item(connection_status, label="Connection Status: Disconnected")
+        global ser  # Make sure the ser object is the same one used in on_connect_button
+        if ser is not None and ser.is_open:
+            ser.close()
+            print("Disconnected from serial port:", ser.name)
+            dpg.set_value(connection_status, "Disconnected")
+        else:
+            print("Serial port is not open, cannot disconnect")
+
+
 
     with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0)):
         # Menu bar #
@@ -113,6 +91,8 @@ def create_ui(portName_input, baud_rate_input, bytesize_input, stop_bits_input, 
             dpg.add_input_text(label="Baud Rate", default_value=baud_rate_input, width=230, tag=baud_rate_input)
             dpg.add_input_text(label="Data Bits", default_value=bytesize_input, width=230, tag=bytesize_input)
             dpg.add_input_text(label="Stop Bits", default_value=stop_bits_input, width=230, tag=stop_bits_input)
+           
+
             dpg.add_input_text(label="Parity", default_value=parity_input, width=230, tag=parity_input)
 
             # Use a function to find the available ports
@@ -124,15 +104,13 @@ def create_ui(portName_input, baud_rate_input, bytesize_input, stop_bits_input, 
             with dpg.group(horizontal=True, parent="portName_input"):
                 dpg.add_button(label="Connect", callback=on_connect_button, width=111, tag=connect_button)
                 dpg.add_button(label="Disconnect", callback=on_disconnect_button, width=111, tag=disconnect_button)
-                           # Provide the status of the connection and allow it to
-            dpg.add_text("Connection Status: ", parent="portName_input")
+                
+            # Provide the status of the connection and allow it to be updated
+            with dpg.group(horizontal=True, parent="portName_input"):
+                dpg.add_text("Connection Status: ", parent="portName_input")
+                dpg.add_text("Disconnected", tag=connection_status, parent="portName_input")     
 
-            dpg.add_text(label="Disconnected", tag=connection_status, parent="portName_input")
-
-    #endregion
-
-    
-    # Data Child Window #
+        # Data Child Window #
         with dpg.child_window(label="Object Window", width=320, height=494, pos=(6, 246), menubar=True):
             with dpg.menu_bar():
                 dpg.add_menu(label="Raw Data")
@@ -156,7 +134,7 @@ def create_ui(portName_input, baud_rate_input, bytesize_input, stop_bits_input, 
 
         # Plot Child Window #
         with dpg.plot(label="Phase Series", height=345, width=1100, pos=(330, 40)):
-        # optionally create legend
+            # optionally create legend
             dpg.add_plot_legend()
 
             # REQUIRED: create x and y axes
@@ -171,8 +149,6 @@ def create_ui(portName_input, baud_rate_input, bytesize_input, stop_bits_input, 
             dpg.add_plot_axis(dpg.mvXAxis, label="x_2")
             dpg.add_plot_axis(dpg.mvYAxis, label="y_2", tag="y_axis_2")
 
-
-
 def main():
     # Populate portName with the available ports
     portName_input = get_available_ports()[0]
@@ -186,15 +162,18 @@ def main():
 
     dpg.create_context()
 
-
-
     # Create the UI
     create_ui(portName_input, baud_rate_input, bytesize_input, stop_bits_input, parity_input, connect_button, disconnect_button, connection_status)
+
+    # Create the viewport and start the Dear PyGui event loop
     dpg.create_viewport(title="Filter Frequency Response Visualizer", width=1450, height=1000, resizable=False)
     dpg.setup_dearpygui()
     dpg.show_viewport()
     dpg.start_dearpygui()
+
+    # Once the event loop has finished, clean up
     dpg.destroy_context()
+
 
 # Run the main() function __init__
 if __name__ == '__main__':
