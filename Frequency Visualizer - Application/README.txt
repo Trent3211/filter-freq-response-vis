@@ -1,3 +1,39 @@
+Application Usage
+
+To run the application, follow these steps:
+
+    Open the ffrv.py file and run it without debugging.
+
+    Connect the Arduino Due to your computer and open the Arduino IDE.
+
+    Open the Successful Sweep Python folder in the Arduino IDE.
+
+    Compile and upload the sketch to the Arduino Due.
+
+    Connect the signal generator to the Arduino Due.
+
+    In the FFRV GUI, set the COM_PORT variable to the port that the Arduino Due is connected to.
+
+    Run the Python script, connect to the COM port required, and choose Sweep -> Start Sweep from the menu.
+
+Note: Make sure that the Arduino Due is properly connected and that the serial communication between the Python script and the Arduino Due is working correctly. If there are issues with the connection, refer to the troubleshooting section of this README.
+Troubleshooting
+
+If you are experiencing issues with the application, try the following steps:
+
+    Check that the Arduino Due is properly connected to your computer.
+
+    Check that the correct port is selected in the Arduino IDE.
+
+    Verify that the serial communication between the Python script and the Arduino Due is working correctly.
+
+    If there are issues with the signal generator, refer to the user manual or contact the manufacturer for support.
+
+    If none of the above steps resolve the issue, try restarting the application or your computer.
+
+
+
+
 1. First Steps
 
 Tutorials will give a broad overview and working knowledge of DPG. Tutorials do not cover every detail so refer to the documentation on each topic to learn more.
