@@ -13,38 +13,10 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
-$Comp
-L Amplifier_Operational:AD8603 U1
-U 1 1 63A145F2
-P 3750 5450
-F 0 "U1" H 4094 5496 50  0000 L CNN
-F 1 "AD8603" H 4094 5405 50  0000 L CNN
-F 2 "Package_TO_SOT_SMD:TSOT-23-5" H 3750 5450 50  0001 C CNN
-F 3 "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8603_8607_8609.pdf" H 3750 5650 50  0001 C CNN
-	1    3750 5450
-	1    0    0    -1  
-$EndComp
-$Comp
-L Amplifier_Operational:AD8603 U3
-U 1 1 63A157DB
-P 5600 5450
-F 0 "U3" H 5944 5496 50  0000 L CNN
-F 1 "AD8603" H 5944 5405 50  0000 L CNN
-F 2 "Package_TO_SOT_SMD:TSOT-23-5" H 5600 5450 50  0001 C CNN
-F 3 "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8603_8607_8609.pdf" H 5600 5650 50  0001 C CNN
-	1    5600 5450
-	1    0    0    -1  
-$EndComp
-Text GLabel 3600 4950 0    50   Input ~ 0
+Text GLabel 7200 4150 0    50   Input ~ 0
 v+
-Text GLabel 5500 5000 0    50   Input ~ 0
-v+
-Text GLabel 5500 5950 0    50   Input ~ 0
+Text GLabel 7200 4750 0    50   Input ~ 0
 v-
-Text GLabel 3650 6050 0    50   Input ~ 0
-v-
-Wire Wire Line
-	5500 5150 5500 5000
 $Comp
 L Device:R R1
 U 1 1 63A16022
@@ -136,14 +108,11 @@ Wire Wire Line
 Wire Wire Line
 	5900 4800 5900 5200
 Wire Wire Line
-	5900 5450 5900 6000
-Wire Wire Line
 	5900 6000 5250 6000
 Wire Wire Line
 	5250 6000 5250 5550
 Wire Wire Line
 	5250 5550 5300 5550
-Connection ~ 5900 5450
 Wire Wire Line
 	4550 5450 4700 5450
 Wire Wire Line
@@ -211,28 +180,6 @@ Wire Wire Line
 Wire Wire Line
 	1850 2800 1850 2900
 $Comp
-L Amplifier_Operational:AD8603 U2
-U 1 1 63D4A525
-P 4550 2850
-F 0 "U2" H 4894 2896 50  0000 L CNN
-F 1 "AD8603" H 4894 2805 50  0000 L CNN
-F 2 "Package_TO_SOT_SMD:TSOT-23-5" H 4550 2850 50  0001 C CNN
-F 3 "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8603_8607_8609.pdf" H 4550 3050 50  0001 C CNN
-	1    4550 2850
-	1    0    0    -1  
-$EndComp
-$Comp
-L Amplifier_Operational:AD8603 U4
-U 1 1 63D4B250
-P 6450 2850
-F 0 "U4" H 6794 2896 50  0000 L CNN
-F 1 "AD8603" H 6794 2805 50  0000 L CNN
-F 2 "Package_TO_SOT_SMD:TSOT-23-5" H 6450 2850 50  0001 C CNN
-F 3 "https://www.analog.com/media/en/technical-documentation/data-sheets/AD8603_8607_8609.pdf" H 6450 3050 50  0001 C CNN
-	1    6450 2850
-	1    0    0    -1  
-$EndComp
-$Comp
 L power:GND #PWR01
 U 1 1 63D4C103
 P 4150 2750
@@ -256,16 +203,10 @@ F 3 "" H 6000 2750 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	4250 2750 4150 2750
-Text GLabel 4450 2400 0    50   Input ~ 0
+Text GLabel 6600 4150 0    50   Input ~ 0
 v+
-Wire Wire Line
-	4450 2550 4450 2400
-Text GLabel 6350 2350 0    50   Input ~ 0
-v+
-Text GLabel 6350 3300 0    50   Input ~ 0
+Text GLabel 6600 4750 0    50   Input ~ 0
 v-
-Wire Wire Line
-	6350 3150 6350 3300
 Text GLabel 4450 3300 0    50   Input ~ 0
 v-
 Wire Wire Line
@@ -401,7 +342,6 @@ Wire Wire Line
 	5900 3700 5900 4300
 Wire Wire Line
 	6750 2850 7200 2850
-Connection ~ 6750 2850
 Text GLabel 7200 2850 2    50   Input ~ 0
 rect_out
 Text GLabel 1750 2900 0    50   Input ~ 0
@@ -452,8 +392,6 @@ vout
 Wire Wire Line
 	6100 5200 5900 5200
 Connection ~ 5900 5200
-Wire Wire Line
-	5900 5200 5900 5450
 Connection ~ 3250 2950
 Wire Wire Line
 	3250 2950 3150 2950
@@ -482,16 +420,6 @@ Text GLabel 1650 4400 0    50   Input ~ 0
 v+
 Text GLabel 1650 4700 0    50   Input ~ 0
 v-
-Wire Wire Line
-	3650 5750 3650 6050
-Wire Wire Line
-	6350 2350 6350 2550
-Wire Wire Line
-	3650 5150 3600 5150
-Wire Wire Line
-	3600 4950 3600 5150
-Wire Wire Line
-	5500 5950 5500 5750
 Wire Wire Line
 	6000 2750 6150 2750
 $Comp
@@ -670,4 +598,76 @@ F 3 "" H 7900 5000 50  0001 C CNN
 	1    7900 5000
 	1    0    0    -1  
 $EndComp
+$Comp
+L Amplifier_Audio:TDA1308 U1
+U 1 1 63F1B11A
+P 4550 2850
+F 0 "U1" H 4550 3217 50  0000 C CNN
+F 1 "LF353" H 4550 3126 50  0000 C CNN
+F 2 "Package_DIP:DIP-8_W7.62mm" H 4550 2850 50  0001 C CIN
+F 3 "https://www.nxp.com/docs/en/data-sheet/TDA1308.pdf" H 4550 2850 50  0001 C CNN
+	1    4550 2850
+	1    0    0    -1  
+$EndComp
+$Comp
+L Amplifier_Audio:TDA1308 U1
+U 2 1 63F1BA5B
+P 6450 2850
+F 0 "U1" H 6450 3217 50  0000 C CNN
+F 1 "LF353" H 6450 3126 50  0000 C CNN
+F 2 "Package_DIP:DIP-8_W7.62mm" H 6450 2850 50  0001 C CIN
+F 3 "https://www.nxp.com/docs/en/data-sheet/TDA1308.pdf" H 6450 2850 50  0001 C CNN
+	2    6450 2850
+	1    0    0    -1  
+$EndComp
+$Comp
+L Amplifier_Audio:TDA1308 U1
+U 3 1 63F1C2F7
+P 6700 4450
+F 0 "U1" H 6658 4496 50  0000 L CNN
+F 1 "LF353" H 6658 4405 50  0000 L CNN
+F 2 "Package_DIP:DIP-8_W7.62mm" H 6700 4450 50  0001 C CIN
+F 3 "https://www.nxp.com/docs/en/data-sheet/TDA1308.pdf" H 6700 4450 50  0001 C CNN
+	3    6700 4450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Amplifier_Audio:TDA1308 U2
+U 1 1 63F1DF0C
+P 3750 5450
+F 0 "U2" H 3750 5817 50  0000 C CNN
+F 1 "LF353" H 3750 5726 50  0000 C CNN
+F 2 "Package_DIP:DIP-8_W7.62mm" H 3750 5450 50  0001 C CIN
+F 3 "https://www.nxp.com/docs/en/data-sheet/TDA1308.pdf" H 3750 5450 50  0001 C CNN
+	1    3750 5450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Amplifier_Audio:TDA1308 U2
+U 2 1 63F1DF12
+P 5600 5450
+F 0 "U2" H 5600 5817 50  0000 C CNN
+F 1 "LF353" H 5600 5726 50  0000 C CNN
+F 2 "Package_DIP:DIP-8_W7.62mm" H 5600 5450 50  0001 C CIN
+F 3 "https://www.nxp.com/docs/en/data-sheet/TDA1308.pdf" H 5600 5450 50  0001 C CNN
+	2    5600 5450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Amplifier_Audio:TDA1308 U2
+U 3 1 63F1DF18
+P 7300 4450
+F 0 "U2" H 7258 4496 50  0000 L CNN
+F 1 "LF353" H 7258 4405 50  0000 L CNN
+F 2 "Package_DIP:DIP-8_W7.62mm" H 7300 4450 50  0001 C CIN
+F 3 "https://www.nxp.com/docs/en/data-sheet/TDA1308.pdf" H 7300 4450 50  0001 C CNN
+	3    7300 4450
+	1    0    0    -1  
+$EndComp
+Connection ~ 6750 2850
+Wire Wire Line
+	5900 5200 5900 5450
+Connection ~ 5900 5450
+Wire Wire Line
+	5900 5450 5900 6000
 $EndSCHEMATC
