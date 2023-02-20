@@ -20,12 +20,12 @@ v-
 $Comp
 L Device:R R1
 U 1 1 63A16022
-P 3050 5550
-F 0 "R1" V 2843 5550 50  0000 C CNN
-F 1 "1k" V 2934 5550 50  0000 C CNN
-F 2 "Resistor_SMD:R_2512_6332Metric_Pad1.40x3.35mm_HandSolder" V 2980 5550 50  0001 C CNN
-F 3 "~" H 3050 5550 50  0001 C CNN
-	1    3050 5550
+P 2850 5350
+F 0 "R1" V 2643 5350 50  0000 C CNN
+F 1 "1k" V 2734 5350 50  0000 C CNN
+F 2 "Resistor_SMD:R_2512_6332Metric_Pad1.40x3.35mm_HandSolder" V 2780 5350 50  0001 C CNN
+F 3 "~" H 2850 5350 50  0001 C CNN
+	1    2850 5350
 	0    1    1    0   
 $EndComp
 $Comp
@@ -127,13 +127,7 @@ Connection ~ 4150 5450
 Wire Wire Line
 	4150 5450 4250 5450
 Wire Wire Line
-	3450 5350 3250 5350
-Wire Wire Line
-	3250 5350 3250 4800
-Wire Wire Line
 	3250 4800 4150 4800
-Wire Wire Line
-	3200 5550 3450 5550
 $Comp
 L power:GND #PWR02
 U 1 1 63A1F31F
@@ -377,10 +371,10 @@ Text GLabel 3150 2950 0    50   Input ~ 0
 vin
 Text GLabel 2050 2900 2    50   Input ~ 0
 peak_in
-Text GLabel 2500 5550 0    50   Input ~ 0
+Text GLabel 2300 5350 0    50   Input ~ 0
 peak_in
 Wire Wire Line
-	2900 5550 2500 5550
+	2700 5350 2300 5350
 Wire Wire Line
 	1950 2900 2050 2900
 Text GLabel 1650 3600 0    50   Input ~ 0
@@ -670,4 +664,10 @@ Wire Wire Line
 Connection ~ 5900 5450
 Wire Wire Line
 	5900 5450 5900 6000
+Wire Wire Line
+	3000 5350 3450 5350
+Wire Wire Line
+	3250 4800 3250 5550
+Wire Wire Line
+	3250 5550 3450 5550
 $EndSCHEMATC
