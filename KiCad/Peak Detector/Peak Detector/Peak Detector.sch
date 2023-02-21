@@ -201,10 +201,6 @@ Text GLabel 6600 4150 0    50   Input ~ 0
 v+
 Text GLabel 6600 4750 0    50   Input ~ 0
 v-
-Text GLabel 4450 3300 0    50   Input ~ 0
-v-
-Wire Wire Line
-	4450 3150 4450 3300
 $Comp
 L Device:D D4
 U 1 1 63D50A96
