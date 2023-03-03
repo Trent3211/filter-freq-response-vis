@@ -1,9 +1,9 @@
 #include <EF_AD9850.h>
 #define TRIGGER 12  // the pin used for triggering the oscilloscope
 
-EF_AD9850 AD9850(11, 10, 8, 9);
+EF_AD9850 AD9850(11, 10, 8, 9);  // 
 
-double freq = 100;
+double freq = 10000;
 bool freq_switch = false;
 
 void setup() {
@@ -14,7 +14,7 @@ void setup() {
 }
 
 void loop() {
-  digitalWrite(TRIGGER, 1);
+  digitalWrite(TRIGGER,1);
   if (freq_switch){
     AD9850.wr_serial(0, freq);
   }
