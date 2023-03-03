@@ -1,0 +1,238 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L Analog_Switch:ADG733BRU U1
+U 1 1 640154AF
+P 6000 2900
+F 0 "U1" H 6000 3142 50  0000 C CNN
+F 1 "ADG733BRU" H 6000 3051 50  0000 C CNN
+F 2 "Package_SO:TSSOP-16_4.4x5mm_P0.65mm" H 6000 2900 50  0001 C CNN
+F 3 "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG733_734.pdf" H 6000 2900 50  0001 C CNN
+	1    6000 2900
+	1    0    0    -1  
+$EndComp
+$Comp
+L Analog_Switch:ADG733BRU U1
+U 2 1 640172D1
+P 6000 3900
+F 0 "U1" H 6000 4142 50  0000 C CNN
+F 1 "ADG733BRU" H 6000 4051 50  0000 C CNN
+F 2 "Package_SO:TSSOP-16_4.4x5mm_P0.65mm" H 6000 3900 50  0001 C CNN
+F 3 "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG733_734.pdf" H 6000 3900 50  0001 C CNN
+	2    6000 3900
+	1    0    0    -1  
+$EndComp
+$Comp
+L Analog_Switch:ADG733BRU U1
+U 3 1 64018CA3
+P 6000 4800
+F 0 "U1" H 6000 5042 50  0000 C CNN
+F 1 "ADG733BRU" H 6000 4951 50  0000 C CNN
+F 2 "Package_SO:TSSOP-16_4.4x5mm_P0.65mm" H 6000 4800 50  0001 C CNN
+F 3 "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG733_734.pdf" H 6000 4800 50  0001 C CNN
+	3    6000 4800
+	1    0    0    -1  
+$EndComp
+$Comp
+L Analog_Switch:ADG733BRU U1
+U 4 1 6401A6C4
+P 6000 6100
+F 0 "U1" H 6330 6146 50  0000 L CNN
+F 1 "ADG733BRU" H 6330 6055 50  0000 L CNN
+F 2 "Package_SO:TSSOP-16_4.4x5mm_P0.65mm" H 6000 6100 50  0001 C CNN
+F 3 "https://www.analog.com/media/en/technical-documentation/data-sheets/ADG733_734.pdf" H 6000 6100 50  0001 C CNN
+	4    6000 6100
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector_Generic:Conn_01x08 J1
+U 1 1 6401CD73
+P 7900 3250
+F 0 "J1" H 7980 3242 50  0000 L CNN
+F 1 "Conn_01x08" H 7980 3151 50  0000 L CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x08_P2.54mm_Vertical" H 7900 3250 50  0001 C CNN
+F 3 "~" H 7900 3250 50  0001 C CNN
+	1    7900 3250
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector_Generic:Conn_01x08 J2
+U 1 1 6401DFBA
+P 9050 3250
+F 0 "J2" H 9130 3242 50  0000 L CNN
+F 1 "Conn_01x08" H 9130 3151 50  0000 L CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x08_P2.54mm_Vertical" H 9050 3250 50  0001 C CNN
+F 3 "~" H 9050 3250 50  0001 C CNN
+	1    9050 3250
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6300 4100 7050 4100
+Wire Wire Line
+	7050 4100 7050 2950
+Wire Wire Line
+	7050 2950 7700 2950
+Wire Wire Line
+	6300 3900 7250 3900
+Wire Wire Line
+	7250 3900 7250 3050
+Wire Wire Line
+	7250 3050 7700 3050
+Wire Wire Line
+	6300 5000 7350 5000
+Wire Wire Line
+	7350 5000 7350 3150
+Wire Wire Line
+	7350 3150 7700 3150
+Wire Wire Line
+	5700 4900 5550 4900
+Wire Wire Line
+	5550 4900 5550 4400
+Wire Wire Line
+	5550 4400 6950 4400
+Wire Wire Line
+	6950 4400 6950 3250
+Wire Wire Line
+	6950 3250 7700 3250
+Wire Wire Line
+	7700 3350 7150 3350
+Wire Wire Line
+	7150 3350 7150 4800
+Wire Wire Line
+	7150 4800 6300 4800
+Wire Wire Line
+	8850 5200 8850 3650
+Wire Wire Line
+	6000 5200 8850 5200
+Wire Wire Line
+	5700 6100 5400 6100
+Wire Wire Line
+	5400 6100 5400 3450
+Wire Wire Line
+	5400 3450 7700 3450
+Wire Wire Line
+	7700 3550 7450 3550
+Wire Wire Line
+	7450 6750 6000 6750
+Wire Wire Line
+	6000 6750 6000 6600
+Wire Wire Line
+	7550 6600 7550 3650
+Wire Wire Line
+	7550 3650 7700 3650
+Wire Wire Line
+	6000 4300 8750 4300
+Wire Wire Line
+	8750 4300 8750 3550
+Wire Wire Line
+	8750 3550 8850 3550
+Wire Wire Line
+	8650 3450 8650 4000
+Wire Wire Line
+	6350 4000 6350 3300
+Wire Wire Line
+	6350 3300 6000 3300
+Wire Wire Line
+	8650 4000 6350 4000
+Wire Wire Line
+	8650 3450 8850 3450
+Wire Wire Line
+	8450 3350 8450 2750
+Wire Wire Line
+	6300 2750 6300 2900
+Wire Wire Line
+	6300 3100 6400 3100
+Wire Wire Line
+	6400 3100 6400 2850
+Wire Wire Line
+	6400 2850 8550 2850
+Wire Wire Line
+	8550 2850 8550 3250
+Wire Wire Line
+	8550 3250 8850 3250
+Wire Wire Line
+	5700 2650 5700 3000
+Wire Wire Line
+	8450 2750 6300 2750
+Wire Wire Line
+	8450 3350 8850 3350
+Wire Wire Line
+	8650 3150 8650 2650
+Wire Wire Line
+	8650 3150 8850 3150
+Wire Wire Line
+	8650 2650 5700 2650
+Wire Wire Line
+	8850 3050 8750 3050
+Wire Wire Line
+	8750 3050 8750 2550
+Wire Wire Line
+	8750 2550 5600 2550
+Wire Wire Line
+	5600 2550 5600 4000
+Wire Wire Line
+	5600 4000 5700 4000
+Wire Wire Line
+	8850 2950 8350 2950
+Wire Wire Line
+	8350 2950 8350 5600
+Wire Wire Line
+	8350 5600 6000 5600
+$Comp
+L power:PWR_FLAG #FLG0101
+U 1 1 64032E2B
+P 6000 5600
+F 0 "#FLG0101" H 6000 5675 50  0001 C CNN
+F 1 "PWR_FLAG" H 6000 5773 50  0000 C CNN
+F 2 "" H 6000 5600 50  0001 C CNN
+F 3 "~" H 6000 5600 50  0001 C CNN
+	1    6000 5600
+	1    0    0    -1  
+$EndComp
+Connection ~ 6000 5600
+$Comp
+L power:PWR_FLAG #FLG0102
+U 1 1 64033645
+P 6850 6600
+F 0 "#FLG0102" H 6850 6675 50  0001 C CNN
+F 1 "PWR_FLAG" H 6850 6773 50  0000 C CNN
+F 2 "" H 6850 6600 50  0001 C CNN
+F 3 "~" H 6850 6600 50  0001 C CNN
+	1    6850 6600
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:PWR_FLAG #FLG0103
+U 1 1 6403498A
+P 7450 6100
+F 0 "#FLG0103" H 7450 6175 50  0001 C CNN
+F 1 "PWR_FLAG" H 7450 6273 50  0000 C CNN
+F 2 "" H 7450 6100 50  0001 C CNN
+F 3 "~" H 7450 6100 50  0001 C CNN
+	1    7450 6100
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	7450 3550 7450 6100
+Connection ~ 7450 6100
+Wire Wire Line
+	7450 6100 7450 6750
+Wire Wire Line
+	6100 6600 6850 6600
+Connection ~ 6850 6600
+Wire Wire Line
+	6850 6600 7550 6600
+$EndSCHEMATC
