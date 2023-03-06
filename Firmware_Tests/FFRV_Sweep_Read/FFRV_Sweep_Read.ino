@@ -136,6 +136,7 @@ void sweepStep() {
     buffer += String(pasBufferReg[i]) + "\n";
   }
   tempBuffFlag = false;
+  sampleCount = 0;
 
   digitalWrite(DISCHARGE_PIN, 0);
   dischargeSet = false;
