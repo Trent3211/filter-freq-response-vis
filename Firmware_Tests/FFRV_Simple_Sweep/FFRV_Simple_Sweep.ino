@@ -10,6 +10,7 @@
 
 #define TIMER_INTERVAL_US        50000   //  50 ms
 #define START_FREQ_HZ            20
+#define DISCHARGE_PIN            12
 
 
 EF_AD9850 AD9850(11, 10, 8, 9);  
@@ -22,6 +23,8 @@ void setup() {
   Serial.begin(9600);
   AD9850.init();
   AD9850.reset();
+  pinMode(DISCHARGE_PIN, OUTPUT);
+  digitalWrite(DISCHARGE_PIN, 0);
 
   DueTimerInterrupt frequencySweepInterrupt = DueTimer.getAvailable();
   frequencySweepInterrupt.attachInterruptInterval(TIMER_INTERVAL_US, sweepStep);
@@ -40,6 +43,8 @@ void sweepStep() {
   if (freq > 30000){
     freq = START_FREQ_HZ;
   }
+  digitalWrite(DISCHARGE_PIN, 1);
   AD9850.wr_serial(0, freq);
   freq = freq*pow(10, 0.04);
+  digitalWrite(DISCHARGE_PIN, 0);
 }
