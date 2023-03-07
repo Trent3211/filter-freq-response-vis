@@ -53,7 +53,6 @@ void setup() {
 
   mode = MODE_WAITING;
 
-
   DueTimerInterrupt frequencySweepInterrupt = DueTimer.getAvailable();
   frequencySweepInterrupt.attachInterruptInterval(SWEEP_INTERVAL_US, sweepStep);
   sweepInterruptID = frequencySweepInterrupt.getTimerNumber();
@@ -62,51 +61,29 @@ void setup() {
   samplingInterrupt.attachInterruptInterval(READ_INTERVAL_US, readAnalog);
   readInterruptID = samplingInterrupt.getTimerNumber();
 
-  analogSetup();
-  //Serial.println("Are you ready ;)");
 }
 
 void loop() {
   if (mode == MODE_WAITING && Serial.available() > 0){
     char charIn = Serial.read();
     if (charIn == 's'){
+      analogSetup();
       mode = MODE_SWEEPING;
     }
-
   }
-  else if (mode == MODE_SWEPT){ // temporary condition change later
-    // Serial.println("Good job on finishing your sweep babe :)");
-    // uint32_t memI = 0;
-    // while (memI < memAddress){
-    //   uint32_t dataDWord = 0;
-    //   if (memI % 17 == 0){
-    //     byte floatBin[4];
-    //     floatBin[0] = dueFlashStorage.read(memI);
-    //     floatBin[1] = dueFlashStorage.read(memI+1);
-    //     floatBin[2] = dueFlashStorage.read(memI+2);
-    //     floatBin[3] = dueFlashStorage.read(memI+3);
-    //     memI += 4;
-    //     float f = *( (float*) floatBin);
-    //     Serial.println(" ");
-    //     Serial.print(f);
-    //     continue;
-    //   }
-    //   memI = read32BytesFromMem(&dueFlashStorage, &dataDWord, memI);
-    //   Serial.print(",");
-    //   Serial.print(dataDWord);
-    //   Serial.print(",");
-    //   Serial.print(dataDWord);
-    // }
-    // mode = 0;
+
+  else if (mode == MODE_SWEPT){ 
     Serial.println("e");
     mode = MODE_WAITING;
   }
+
   else if (mode == MODE_SWEEPING && tempBuffFlag == false){
     Serial.print(buffer);
     if (tempBuffFlag == false){
       buffer = "";
     }
   }
+  
 }
 
 
@@ -118,14 +95,6 @@ void sweepStep() {
   dischargeSet = true;   // I'm not sure if there's a better way; maybe set dischargepin bidirectional?
   digitalWrite(DISCHARGE_PIN, 1);
   
-  // set new frequency
-  if (freq > 30000){
-    freq = START_FREQ_HZ;
-    mode = MODE_SWEPT;
-  }
-  AD9850.wr_serial(0, freq);
-  freq = freq*pow(10, 0.04);
-
   // load values to memory (serial)
   tempBuffFlag = true;
   for (uint8_t i = 0; i < NUM_SAMPLES; i++){
@@ -136,6 +105,15 @@ void sweepStep() {
     buffer += String(pasBufferReg[i]) + "\n";
   }
   tempBuffFlag = false;
+
+  // check frequency
+  if (freq > 30000){
+    freq = START_FREQ_HZ;
+    mode = MODE_SWEPT;
+    return;
+  }
+  AD9850.wr_serial(0, freq);
+  freq = freq*pow(10, 0.04);
   sampleCount = 0;
 
   digitalWrite(DISCHARGE_PIN, 0);
@@ -146,6 +124,7 @@ void readAnalog(){
   if (mode != MODE_SWEEPING){
     return;
   }
+
   if (!dischargeSet && sampleCount < NUM_SAMPLES){
     masBufferReg[sampleCount] = ADC->ADC_CDR[MAS_PIN];
     pasBufferReg[sampleCount] = ADC->ADC_CDR[PAS_PIN];
@@ -161,31 +140,4 @@ void analogSetup(){
   ADC->ADC_CHER=0xC0;   // Enabling channels 6 and 7 (A0 and A1)
 }
 
-
-void loadRegistersToFlash(float frequency){
-  digitalWrite(TEST_PIN, 1);
-  memAddress = write32BytesToMem(&dueFlashStorage, *(uint32_t*)&frequency, memAddress);
-  for(uint8_t i = 0; i < NUM_SAMPLES; i++){
-    memAddress = write32BytesToMem(&dueFlashStorage, masBufferReg[i], memAddress);
-    memAddress = write32BytesToMem(&dueFlashStorage, pasBufferReg[i], memAddress);
-  }
-  digitalWrite(TEST_PIN, 0);
-}
-  
-
-uint32_t write32BytesToMem(DueFlashStorage *dfs, uint32_t data, uint32_t memStart){
-  dfs->write(memStart, (0xff & data));
-  dfs->write(memStart+1, (0xff & (data >> 8)));
-  dfs->write(memStart+2, (0xff & (data >> 16)));
-  dfs->write(memStart+3, (0xff & (data >> 24)));
-  return memStart + 4;
-}
-
-uint32_t read32BytesFromMem(DueFlashStorage *dfs, uint32_t *data, uint32_t memStart){
-  *data = dfs->read(memStart);
-  *data = dfs->read(memStart+1) << 8;
-  *data = dfs->read(memStart+2) << 16;
-  *data = dfs->read(memStart+3) << 24;
-  return memStart + 4;
-}
   
