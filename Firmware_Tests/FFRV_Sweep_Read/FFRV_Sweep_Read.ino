@@ -10,7 +10,7 @@
 
 
 #define SWEEP_INTERVAL_US        50000   //  50 ms
-#define READ_INTERVAL_US         50      //  50 us
+#define READ_INTERVAL_US         5000    //  50 us
 #define START_FREQ_HZ            20
 #define DISCHARGE_PIN            12
 #define NUM_SAMPLES              8
@@ -126,10 +126,13 @@ void readAnalog(){
   }
 
   if (!dischargeSet && sampleCount < NUM_SAMPLES){
+    digitalWrite(TEST_PIN, 1);
     masBufferReg[sampleCount] = ADC->ADC_CDR[MAS_PIN];
     pasBufferReg[sampleCount] = ADC->ADC_CDR[PAS_PIN];
     sampleCount++;
+    digitalWrite(TEST_PIN, 0);
   }
+  
 }
 
 void analogSetup(){
