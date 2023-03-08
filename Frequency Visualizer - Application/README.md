@@ -1,4 +1,4 @@
-# FFRV - Fast Fourier Transform Residual Vector Plot
+# FFRV - Filter Frequency Response Visualizer
 
 FFRV is a Python application for testing and analyzing the performance of a device under test (DUT) using a Due microcontroller. 
 
