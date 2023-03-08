@@ -249,12 +249,29 @@ def take_screenshot():
     im.save(screenshot_path + "screenshot_{}.png".format(timestamp))
     print("Screenshot saved to", screenshot_path + "screenshot_{}.png".format(timestamp))
 
-def table_to_csv():
+def table_to_csv(user_id):
     global frequency
     global magnitude
     global phase
+    global average_frequency
+    global average_magnitude
+    global average_phase
 
-    if len(frequency) > 0:
+    if user_id == 34:
+        data_type = 'raw'
+        freq = frequency
+        mag = magnitude
+        ph = phase
+    elif user_id == 35:
+        data_type = 'average'
+        freq = average_frequency
+        mag = average_magnitude
+        ph = average_phase
+    else:
+        print("Invalid button ID")
+        return
+
+    if len(freq) > 0:
         now = datetime.datetime.now()
         timestamp = now.strftime("%Y-%m-%d_%H-%M-%S")
 
@@ -264,15 +281,16 @@ def table_to_csv():
 
         # Create a pandas dataframe from the data
         df = pd.DataFrame({
-            "Frequency (Hz)": frequency,
-            "Magnitude (dB)": magnitude,
-            "Phase (deg)": phase
+            "Frequency (Hz)": freq,
+            "Magnitude (dB)": mag,
+            "Phase (deg)": ph
         })
-        # Save the dataframe to a csv file with the syntax "data_YYYY-MM-DD_HH-MM-SS.csv"
-        df.to_csv(data_path + "data_{}.csv".format(timestamp), index=False)
-        print("Data saved to", data_path + "data_{}.csv".format(timestamp))
+        # Save the dataframe to a csv file with the syntax "data_type_YYYY-MM-DD_HH-MM-SS.csv"
+        df.to_csv(data_path + "{}_data_{}.csv".format(data_type, timestamp), index=False)
+        print("{} data saved to".format(data_type.capitalize()), data_path + "{}_data_{}.csv".format(data_type, timestamp))
     else:
-        print("No data to save")       
+        print("No data to save")
+    
 
 # ---------- BEGINNING OF GUI CODE ---------- #
 
@@ -296,8 +314,8 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
             dpg.add_menu_item(label="Save Application Screenshot", callback=take_screenshot)
 
         with dpg.menu(label="Data"):
-            dpg.add_menu_item(label="Export Raw Data", callback=table_to_csv)
-            dpg.add_menu_item(label="Export Average Data", callback=table_to_csv)
+            dpg.add_menu_item(label="Export Raw Data", callback=table_to_csv, user_data=34)
+            dpg.add_menu_item(label="Export Average Data", callback=table_to_csv, user_data=35)
 
         with dpg.menu(label="Help"):
             dpg.add_menu_item(label="Plotting Documentation", callback=plotting_documentation)
@@ -393,7 +411,7 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
             dpg.add_checkbox(label="M2", tag="a_m5_checkbox", default_value=False, callback=add_drag_points)
     with dpg.plot(label="Raw Data Plot", height=350, width=1100, pos=(330, 42), tag="raw_plot"):
         # Optionally create legend
-        dpg.add_plot_legend()
+        dpg.add_plot_legend(horizontal=True)
 
         dpg.add_plot_axis(dpg.mvXAxis, label="Frequency (Hz)", log_scale=True, tag="frequency_axis_1")
         # Set the axis limits using set_axis_limits(axis, min, max)
@@ -410,15 +428,16 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
 
         # Average Plot Drag Lines and Points
         dpg.add_drag_line(label="Raw_Data_1_x", color=[255, 0, 0], thickness=1.0,
-                                vertical=True, show=False, default_value=200,
+                                vertical=True, show=False, default_value=100,
                                 callback=on_drag_line, tag="r_drag_line_1")
         
         dpg.add_drag_line(label="Raw_Data_2_x", color=[255, 0, 0], thickness=1.0,
-                                vertical=True, show=False, default_value=8000,
+                                vertical=True, show=False, default_value=6000,
                                 callback=on_drag_line, tag="r_drag_line_2")
+        
         label_names = ["Raw_Data_1_p", "Raw_Data_2_p", "Raw_Data_3_p", "Raw_Data_4_p", "Raw_Data_5_p", "Raw_Data_6_p"]
         tag_names = ["r_m0_dragpoint", "r_m1_dragpoint", "r_m2_dragpoint", "r_m3_dragpoint", "r_m4_dragpoint", "r_m5_dragpoint"]
-
+        
         for label, tag in zip(label_names, tag_names):
             dpg.add_drag_point(label=label, default_value=[0,0], color=[255, 255, 0], tag=tag, show=False, callback=on_drag_point)
 
@@ -427,7 +446,7 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
 
     # Make a second plot for the Magnitude
     with dpg.plot(label="Average Plot", height=350, width=1100, pos=(330, 391), tag="average_plot"):
-        dpg.add_plot_legend()
+        dpg.add_plot_legend(horizontal=True)
 
         dpg.add_plot_axis(dpg.mvXAxis, label="Frequency (Hz)", log_scale=True, tag="frequency_axis_2")
         dpg.set_axis_limits(dpg.last_item(), freq_start, freq_end)
@@ -439,15 +458,15 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
             dpg.set_axis_limits(dpg.last_item(), mag_start, mag_end)
 
         # Set a placeholder for the magnitude data
-        dpg.add_line_series([0, 0], [0, 0], label="Phase", parent="phase_axis_2", tag="phase_series_2")
         dpg.add_line_series([0, 0], [0, 0], label="Magnitude", parent="frequency_axis_2", tag="magnitude_series_2")
+        dpg.add_line_series([0, 0], [0, 0], label="Phase", parent="phase_axis_2", tag="phase_series_2")
 
         dpg.add_drag_line(label="Average_Data_1_x", color=[0, 255, 0], thickness=1.0,
-                                vertical=True, show=False, default_value=200,
+                                vertical=True, show=False, default_value=100,
                                 callback=on_drag_line, tag="a_drag_line_1")
         
         dpg.add_drag_line(label="Average_Data_2_x", color=[0, 255, 0], thickness=1.0,
-                                vertical=True, show=False, default_value=8000,
+                                vertical=True, show=False, default_value=6000,
                                 callback=on_drag_line, tag="a_drag_line_2")
         
         label_names = ["Average_Data_1_p", "Average_Data_2_p", "Average_Data_3_p", "Average_Data_4_p", "Average_Data_5_p", "Average_Data_6_p"]
