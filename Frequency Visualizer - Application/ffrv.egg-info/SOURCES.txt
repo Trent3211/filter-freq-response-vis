@@ -1,0 +1,7 @@
+README.txt
+setup.py
+ffrv.egg-info/PKG-INFO
+ffrv.egg-info/SOURCES.txt
+ffrv.egg-info/dependency_links.txt
+ffrv.egg-info/requires.txt
+ffrv.egg-info/top_level.txt

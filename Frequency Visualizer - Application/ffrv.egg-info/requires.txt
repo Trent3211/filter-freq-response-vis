@@ -1,0 +1,6 @@
+dearpygui
+pyserial
+pyscreenshot
+pygetwindow
+Pillow
+pandas

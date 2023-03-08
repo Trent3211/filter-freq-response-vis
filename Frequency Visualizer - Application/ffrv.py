@@ -5,38 +5,80 @@ from math import sin, cos
 from serial.serialutil import SerialException
 import serial.tools.list_ports
 import pyscreenshot
-import pygetwindow
-from PIL import Image
 import webbrowser
 import pandas as pd
 import datetime
 import os
+
+# Application constants
+title = "Filter Frequency Response Visualizer"
+# Icon
+icon = "./res/icon.ico"
 
 ser = None
 magnitude = []
 phase = []
 frequency = []
 ports = []
+average_frequency = []
+average_magnitude = []
+average_phase = []
+
+# Start and Stop commands
+start_command = "s"
+stop_command = "e"
+
+# Data constants
+baud_rate = [9600, 19200, 38400, 57600, 115200]
+
+# Plot axis constraints
+freq_start = 20
+freq_end = 30000
+mag_start = -2
+mag_end = 2
+phase_start = -2
+phase_end = 2
+
 # Current directory screenshot folder
 screenshot_path = "./screenshots/"
 data_path = "./data/"
-titles = pygetwindow.getAllTitles()
-
+github = "https://github.com/Trent3211/filter-freq-response-vis"
+about = "https://github.com/Trent3211/filter-freq-response-vis/blob/main/README.md"
+documentation = "https://dearpygui.readthedocs.io/en/latest/documentation/plots.html"
 
 dpg.create_context()
 
 def github():
-    webbrowser.open("https://github.com/Trent3211/filter-freq-response-vis")
+    webbrowser.open(github)
 
 def about():
-    webbrowser.open("https://github.com/Trent3211/filter-freq-response-vis/blob/main/README.md")
+    webbrowser.open(about)
 
 def plotting_documentation():
-    webbrowser.open("https://dearpygui.readthedocs.io/en/latest/documentation/plots.html")
-
+    webbrowser.open(documentation)
 
 def print_me(sender):
     print(f"[{sender}] was clicked")
+
+def on_drag_line(sender):
+    print(f"Line position: {dpg.get_value(sender)}")
+
+def on_drag_point(data):
+    print(data)
+    x, y = dpg.get_value(data)
+
+    closest_index = min(range(len(frequency)), key=lambda i: abs(frequency[i] - x))
+
+    dpg.set_value(data, x=frequency[closest_index], y=magnitude[closest_index])
+
+def clear_data():
+    # Clear the data lists
+    magnitude.clear()
+    phase.clear()
+    frequency.clear()
+    average_frequency.clear()
+    average_magnitude.clear()
+    average_phase.clear()
 
 def get_available_ports():
 
@@ -46,9 +88,7 @@ def get_available_ports():
     return ports
 
 def stop_data():
-    # Send the character command 'r'
-    command = "e\n"
-    ser.write(command.encode())
+    ser.write(stop_command.encode())
     print("Sweep stopped")
 
 def on_connect_button():
@@ -77,62 +117,72 @@ def on_disconnect_button():
     else:
         print("Serial port is already closed.")
 
-# Create a definition to add the cursors to the plots based on which checkbox is selected
-# There are two checkboxes, one called phase_cursors_checkbox and one called magnitude_cursors_checkbox
-# Depending on which one is checked, the cursors will be added to the phase plot or the magnitude plot
-def add_cursors():
+def set_autofit():
+    dpg.set_axis_limits_auto('frequency_axis_1')
+    dpg.set_axis_limits_auto('frequency_axis_2')
+    dpg.set_axis_limits_auto('magnitude_axis_1')
+    dpg.set_axis_limits_auto('magnitude_axis_2')
+    dpg.set_axis_limits_auto('phase_axis_1')
+    dpg.set_axis_limits_auto('phase_axis_2')
+
+def add_cursors(sender):
     # Get the values of the checkboxes
-    phase_cursors_checked = dpg.get_value("phase_cursors_checkbox")
-    mag_cursors_checked = dpg.get_value("magnitude_cursors_checkbox")
-    
-    if phase_cursors_checked:
-        # Using dpg.add_drag_line() to add the cursors to the phase plot
-        dpg.add_drag_line(label="Drag Line Phase 1", color=[255, 0, 0, 255], tag="dline1_phase")
-        dpg.add_drag_line(label="Drag Line Phase 2", color=[255, 0, 0, 255], tag="dline2_phase")
-        print("Phase cursors added")
-    else:
-        # Remove cursors from the phase plot
-        dpg.delete_item("dline1_phase")
-        dpg.delete_item("dline2_phase")
-        print("Phase cursors removed")
-    
-    if mag_cursors_checked:
-        # Add cursors to the magnitude plot
-        dpg.add_drag_line(label="Drag Line Magnitude 1", color=[255, 0, 0, 255], tag="dline1_mag")
-        dpg.add_drag_line(label="Drag Line Magnitude 2", color=[255, 0, 0, 255], tag="dline2_mag")
-        print("Magnitude cursors added")
-    else:
-        # Remove cursors from the magnitude plot
-        dpg.delete_item("dline1_mag")
-        dpg.delete_item("dline2_mag")
-        print("Magnitude cursors removed")
+    checkbox_name = sender
+    drag_line_name = checkbox_name.replace("checkbox", "drag_line")
 
+    if dpg.get_value(checkbox_name):
+        dpg.configure_item(drag_line_name + "_1", show=True)
+        dpg.configure_item(drag_line_name + "_2", show=True)
+    else:
+        dpg.configure_item(drag_line_name + "_1", show=False)
+        dpg.configure_item(drag_line_name + "_2", show=False)
 
+def add_drag_points(sender, data):
+    # Get the state of the checkbox
+    checkbox_name = sender
+    drag_point_name = checkbox_name.replace("checkbox", "dragpoint")
+
+    # Now write the logic to add the drag points
+    if dpg.get_value(checkbox_name):
+        dpg.configure_item(drag_point_name, show=True)
+    else:
+        dpg.configure_item(drag_point_name, show=False)
+
+def show_raw_data():
+    dpg.configure_item('raw_table', show=True)
+    dpg.configure_item('average_table', show=False)
+
+def show_averaged_data():
+    dpg.configure_item('raw_table', show=False)
+    dpg.configure_item('average_table', show=True)
 
 def get_data_from_serial():
     global ser
     global magnitude
     global phase
     global frequency
+    global average_frequency
+    global average_magnitude
+    global average_phase
 
-    # Clear the data lists
-    magnitude.clear()
-    phase.clear()
-    frequency.clear()
+    # Clear the data in the raw_table and average_table
+    clear_data()
 
     # Send the character command 's'
-    command = "s\n"
-    ser.write(command.encode())
+    ser.write(start_command.encode())
     
-    # Clear the data in the main_table using dpg.get_item_children(table_tag, 1)
-    for child in dpg.get_item_children("main_table", 1):
+    # Clear the data in the raw_table using dpg.get_item_children(table_tag, 1)
+    for child in dpg.get_item_children("raw_table", 1):
+        dpg.delete_item(child)
+
+    for child in dpg.get_item_children("average_table", 1):
         dpg.delete_item(child)
 
     # Read the data from the serial port until e is read
     while True:
         data = ser.readline().decode('utf-8').strip()
         print(data)
-        if data.strip() == 'e': # Edit this for the terminating character
+        if data.strip() == stop_command: # Edit this for the terminating character
             print("Sweep completed.")
             break
         else:
@@ -144,31 +194,47 @@ def get_data_from_serial():
                     magnitude.append(float(data[1]))
                     phase.append(float(data[2]))
 
-                    dpg.set_value('phase_series', [frequency, phase])
-                    dpg.set_item_label('phase_series', f"Phase (deg) - {frequency[-1]} Hz")
+                    dpg.set_value('phase_series_1', [frequency, phase])
 
-                    dpg.set_value('magnitude_series', [frequency, magnitude])
-                    dpg.set_item_label('magnitude_series', f"Magnitude (dB) - {frequency[-1]} Hz")
+                    dpg.set_value('magnitude_series_1', [frequency, magnitude])
 
                     # Add the data to the table
-                    with dpg.table_row(parent="main_table"):
+                    with dpg.table_row(parent="raw_table"):
                         dpg.add_text(str(frequency[-1]))
                         dpg.add_text(str(magnitude[-1]))
                         dpg.add_text(str(phase[-1]))
+
+                    # Create a running average of the data at every 5 points. Plot it and add it to the average_table
+                    if len(frequency) % 5 == 0:
+                        average_frequency.append(sum(frequency[-5:]) / 5)
+                        average_magnitude.append(sum(magnitude[-5:]) / 5)
+                        average_phase.append(sum(phase[-5:]) / 5)
+
+                        # Round the average values to 2 decimal places
+                        average_frequency[-1] = round(average_frequency[-1], 2)
+                        average_magnitude[-1] = round(average_magnitude[-1], 2)
+                        average_phase[-1] = round(average_phase[-1], 2)
+
+                        dpg.set_value('phase_series_2', [average_frequency, average_phase])
+
+                        dpg.set_value('magnitude_series_2', [average_frequency, average_magnitude])
+
+                        with dpg.table_row(parent="average_table"):
+                            dpg.add_text(str(average_frequency[-1]))
+                            dpg.add_text(str(average_magnitude[-1]))
+                            dpg.add_text(str(average_phase[-1]))
 
                 except ValueError:
                     print("Invalid data: ", data)
                     continue
     
     # The plots have axis constraints, but now that the sweep is done, we can set it back to autofit
-    dpg.set_axis_limits_auto('frequency_axis_1')
-    dpg.set_axis_limits_auto('frequency_axis_2')
-    dpg.set_axis_limits_auto('magnitude_axis')
-    dpg.set_axis_limits_auto('phase_axis')
+    set_autofit()
 
-    # Send the character command 'r'
-    command = "r\n"
-    ser.write(command.encode())
+    # Show the raw table
+    show_raw_data()
+
+    # Send
 
 def take_screenshot():
     # Just take a screenshot of the entire window
@@ -201,19 +267,12 @@ def table_to_csv():
         df.to_csv(data_path + "data_{}.csv".format(timestamp), index=False)
         print("Data saved to", data_path + "data_{}.csv".format(timestamp))
     else:
-        print("No data to save")
+        print("No data to save")       
 
+# ---------- BEGINNING OF GUI CODE ---------- #
 
-
-
-with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag="main_window"):
-    # Theme #
-    with dpg.theme(tag="mag_plot_theme"):
-        with dpg.theme_component(dpg.mvLineSeries):
-            dpg.add_theme_color(dpg.mvPlotCol_Line, (50, 100, 150), category=dpg.mvThemeCat_Plots)
-            
-
-    with dpg.theme(tag="phase_plot_theme"):
+with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag="main_window"):      
+    with dpg.theme(tag="plot_theme"):
         # Make a fun looking theme perfect for me.
         with dpg.theme_component(dpg.mvLineSeries):
             dpg.add_theme_color(dpg.mvPlotCol_Line, (200, 80, 100), category=dpg.mvThemeCat_Plots)
@@ -233,6 +292,7 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
 
         with dpg.menu(label="Data"):
             dpg.add_menu_item(label="Export Raw Data", callback=table_to_csv)
+            dpg.add_menu_item(label="Export Average Data", callback=table_to_csv)
 
         with dpg.menu(label="Help"):
             dpg.add_menu_item(label="Plotting Documentation", callback=plotting_documentation)
@@ -244,7 +304,7 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
         with dpg.menu_bar():
             dpg.add_menu(label="Connection Handling")
 
-        dpg.add_combo(label="Baud Rate", default_value=115200, items=[9600, 19200, 38400, 57600, 115200], width=230, tag='baud_rate')
+        dpg.add_combo(label="Baud Rate", default_value=115200, items=baud_rate, width=230, tag='baud_rate')
         with dpg.tooltip(dpg.last_item()):
             dpg.add_text("The baud rate of the serial connection.")
         dpg.add_combo(label="Port Name", default_value="Select a port...", items=get_available_ports(), width=230, tag='port_name')
@@ -259,22 +319,35 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
         # Provide the status of the connection and allow it to be updated
         with dpg.group(horizontal=True, parent="status_group"):
             dpg.add_text("Connection Status: ")
-            dpg.add_text("Disconnected", tag='connection_status')     
+            dpg.add_text("Disconnected", tag='connection_status')  
 
     # Data Child Window #
     with dpg.child_window(label="Object Window", width=320, height=560, pos=(6, 180), menubar=True):
         with dpg.menu_bar():
-            dpg.add_menu(label="Raw Data")
+            with dpg.menu(label="Select Data to Show"):
+                dpg.add_menu_item(label="Raw Data", callback=show_raw_data)
+                dpg.add_menu_item(label="Averaged Data", callback=show_averaged_data)
+            
         
-        with dpg.table(label="Table Data", tag="main_table", header_row=True, no_host_extendX=True,
+        with dpg.table(label="Table Data", tag="raw_table", header_row=True, no_host_extendX=True,
                                         borders_innerH=True, borders_outerH=True, borders_innerV=True,
                                         borders_outerV=True, row_background=True, hideable=False, reorderable=False,
                                         resizable=False, sortable=False, policy=dpg.mvTable_SizingFixedFit,
-                                        scrollX=False, delay_search=True, scrollY=True):
+                                        scrollX=False, delay_search=True, scrollY=True, show=False):
 
-                    c1 = dpg.add_table_column(label="Freq. (Hz)")
-                    c2 = dpg.add_table_column(label="Mag. (dB)")
-                    c3 = dpg.add_table_column(label="Phase (deg)")
+                    c1 = dpg.add_table_column(label="Freq. (Hz)", width_fixed=True, init_width_or_weight=90)
+                    c2 = dpg.add_table_column(label="Mag. (dB)", width_fixed=True, init_width_or_weight=90)
+                    c3 = dpg.add_table_column(label="Phase (deg)", width_fixed=True, init_width_or_weight=90)
+        
+        with dpg.table(label="Table Data", tag="average_table", header_row=True, no_host_extendX=True,
+                                        borders_innerH=True, borders_outerH=True, borders_innerV=True,
+                                        borders_outerV=True, row_background=True, hideable=False, reorderable=False,
+                                        resizable=False, sortable=False, policy=dpg.mvTable_SizingFixedFit,
+                                        scrollX=False, delay_search=True, scrollY=True, show=False):
+
+                    c1 = dpg.add_table_column(label="Freq. (Hz)", width_fixed=True, init_width_or_weight=90)
+                    c2 = dpg.add_table_column(label="Mag. (dB)", width_fixed=True, init_width_or_weight=90)
+                    c3 = dpg.add_table_column(label="Phase (deg)", width_fixed=True, init_width_or_weight=90)
 
     # Logger Child Window #
     with dpg.child_window(label="Object Window", width=320, height=210, pos=(6, 744), menubar=True):
@@ -283,62 +356,90 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
             # Make this a logger textbox
             dpg.add_text(tag="logger")
         
-    with dpg.child_window(label="Phase Plot Options", width=548, height=210, pos=(330, 744), menubar=True):
+    with dpg.child_window(label="Raw Data Plot", width=548, height=210, pos=(330, 744), menubar=True):
         with dpg.menu_bar():
-            dpg.add_menu(label="Phase Plot Options")
-        with dpg.group(horizontal=True, parent="phase_checkbox_group"):
-            dpg.add_checkbox(label="M0", tag="p_m0_checkbox")
-            dpg.add_checkbox(label="M1", tag="p_m1_checkbox")
-            dpg.add_checkbox(label="M2", tag="p_m2_checkbox")
-            dpg.add_checkbox(label="Phase Cursors", default_value=False, callback=add_cursors, tag="phase_cursors_checkbox", parent="phase_plot")
+            dpg.add_menu(label="Raw Data Plot")
+        with dpg.group(horizontal=True, tag="raw_checkbox_group"):
+            dpg.add_checkbox(label="M0", tag="r_m0_checkbox", default_value=False, callback=add_drag_points)
+            dpg.add_checkbox(label="M1", tag="r_m1_checkbox", default_value=False, callback=add_drag_points)
+            dpg.add_checkbox(label="M2", tag="r_m2_checkbox", default_value=False, callback=add_drag_points)
+            dpg.add_checkbox(label="Raw Plot Drag Lines", default_value=False, callback=add_cursors, tag="r_checkbox", parent="raw_plot")
         
-
-    with dpg.child_window(label="Magnitude Plot Options", width=548, height=210, pos=(882, 744), menubar=True):
+    with dpg.child_window(label="Average Plot Options", width=548, height=210, pos=(882, 744), menubar=True):
         with dpg.menu_bar():
-            dpg.add_menu(label="Magnitude Plot Options")
+            dpg.add_menu(label="Average Plot Options")
             # Make the below horizontal
-        with dpg.group(horizontal=True, parent="magnitude_checkbox_group"):
-            dpg.add_checkbox(label="M0", tag="m_m0_checkbox")
-            dpg.add_checkbox(label="M1", tag="m_m1_checkbox")
-            dpg.add_checkbox(label="M2", tag="m_m2_checkbox")
-            dpg.add_checkbox(label="Magnitude Cursors", default_value=False, callback=add_cursors, tag="magnitude_cursors_checkbox", parent="magnitude_plot")
+        with dpg.group(horizontal=True, tag="average_checkbox_group"):
+            dpg.add_checkbox(label="M0", tag="a_m0_checkbox", default_value=False, callback=add_drag_points)
+            dpg.add_checkbox(label="M1", tag="a_m1_checkbox", default_value=False, callback=add_drag_points)
+            dpg.add_checkbox(label="M2", tag="a_m2_checkbox", default_value=False, callback=add_drag_points)
+            dpg.add_checkbox(label="Average Plot Drag Lines", default_value=False, callback=add_cursors, tag="a_checkbox", parent="average_plot")
 
-    with dpg.plot(label="Phase Plot", height=350, width=1100, pos=(330, 42), tag="phase_plot"):
+    with dpg.plot(label="Raw Data Plot", height=350, width=1100, pos=(330, 42), tag="raw_plot"):
         # Optionally create legend
         dpg.add_plot_legend()
 
         dpg.add_plot_axis(dpg.mvXAxis, label="Frequency (Hz)", log_scale=True, tag="frequency_axis_1")
         # Set the axis limits using set_axis_limits(axis, min, max)
-        dpg.set_axis_limits(dpg.last_item(), 20, 30000)
+        dpg.set_axis_limits(dpg.last_item(), freq_start, freq_end)
 
-        dpg.add_plot_axis(dpg.mvYAxis, label="Phase (deg)", tag="phase_axis")
-        dpg.set_axis_limits(dpg.last_item(), -2, 2)
+        with dpg.plot_axis(dpg.mvYAxis, label="Phase (deg)", tag="phase_axis_1"):
+            dpg.set_axis_limits(dpg.last_item(), phase_start, phase_end)
 
-        # Set a placeholder for the phase data
-        # DearPyGui uses the formatting of dpg.add_line_series(sindatax, sindatay, label="Sine Wave", parent="y_axis",tag="sine_series")
-        # This is just a placeholder, and needs to use my actual data and variables from my code.
-        dpg.add_line_series([0, 0], [0, 0], label="Phase", parent="phase_axis", tag="phase_series")
+        with dpg.plot_axis(dpg.mvYAxis, label="Magnitude (dB)", tag="magnitude_axis_1"):
+            dpg.set_axis_limits(dpg.last_item(), mag_start, mag_end)
 
-        dpg.bind_item_theme("phase_series", "phase_plot_theme")
+        dpg.add_line_series([0, 0], [0, 0], label="Phase", parent="phase_axis_1", tag="phase_series_1")
+        dpg.add_line_series([0, 0], [0, 0], label="Magnitude", parent="magnitude_axis_1", tag="magnitude_series_1")
+
+        # Average Plot Drag Lines and Points
+        dpg.add_drag_line(label="Raw_Data_1_x", color=[255, 0, 0], thickness=1.0,
+                                vertical=True, show=False, default_value=200,
+                                callback=on_drag_line, tag="r_drag_line_1")
+        
+        dpg.add_drag_line(label="Raw_Data_2_x", color=[255, 0, 0], thickness=1.0,
+                                vertical=True, show=False, default_value=8000,
+                                callback=on_drag_line, tag="r_drag_line_2")
+        draggable_point = dpg.add_drag_point(label="Raw_Data_1_p", default_value=[0,0], color=[255, 255, 0], tag="r_m0_dragpoint", show=False)
+        dpg.add_drag_point(label="Raw_Data_2_p", default_value=[0,0], color=[255, 255, 0], tag="r_m1_dragpoint", show=False)
+        dpg.add_drag_point(label="Raw_Data_3_p", default_value=[0,0], color=[255, 255, 0], tag="r_m2_dragpoint", show=False)
+        
+        dpg.bind_item_theme("phase_series_1", "plot_theme")
 
     # Make a second plot for the Magnitude
-    with dpg.plot(label="Magnitude Plot", height=350, width=1100, pos=(330, 391), tag="magnitude_plot"):
+    with dpg.plot(label="Average Plot", height=350, width=1100, pos=(330, 391), tag="average_plot"):
         dpg.add_plot_legend()
 
         dpg.add_plot_axis(dpg.mvXAxis, label="Frequency (Hz)", log_scale=True, tag="frequency_axis_2")
-        dpg.set_axis_limits(dpg.last_item(), 20, 30000)
+        dpg.set_axis_limits(dpg.last_item(), freq_start, freq_end)
 
-        dpg.add_plot_axis(dpg.mvYAxis, label="Magnitude (dB)", tag="magnitude_axis")
-        dpg.set_axis_limits(dpg.last_item(), -2, 2)
+        with dpg.plot_axis(dpg.mvYAxis, label="Phase (deg)", tag="phase_axis_2"):
+            dpg.set_axis_limits(dpg.last_item(), phase_start, phase_end)
+        
+        with dpg.plot_axis(dpg.mvYAxis, label="Magnitude (dB)", tag="magnitude_axis_2"):
+            dpg.set_axis_limits(dpg.last_item(), mag_start, mag_end)
 
         # Set a placeholder for the magnitude data
-        dpg.add_line_series([0, 0], [0, 0], label="Magnitude", parent="magnitude_axis", tag="magnitude_series")
+        dpg.add_line_series([0, 0], [0, 0], label="Phase", parent="phase_axis_2", tag="phase_series_2")
+        dpg.add_line_series([0, 0], [0, 0], label="Magnitude", parent="frequency_axis_2", tag="magnitude_series_2")
 
-        dpg.bind_item_theme("magnitude_series", "mag_plot_theme")
+        dpg.add_drag_line(label="Average_Data_1_x", color=[0, 255, 0], thickness=1.0,
+                                vertical=True, show=False, default_value=200,
+                                callback=on_drag_line, tag="a_drag_line_1")
+        
+        dpg.add_drag_line(label="Average_Data_2_x", color=[0, 255, 0], thickness=1.0,
+                                vertical=True, show=False, default_value=8000,
+                                callback=on_drag_line, tag="a_drag_line_2")
+        
+        dpg.add_drag_point(label="Average_Data_1_p", default_value=[0,0], color=[255, 255, 0], tag="a_m0_dragpoint", show=False)
+        dpg.add_drag_point(label="Average_Data_2_p", default_value=[0,0], color=[255, 255, 0], tag="a_m1_dragpoint", show=False)
+        dpg.add_drag_point(label="Average_Data_3_p", default_value=[0,0], color=[255, 255, 0], tag="a_m2_dragpoint", show=False)
+
+        dpg.bind_item_theme("phase_series_2", "plot_theme")
         
 
 # Create the viewport and start the Dear PyGui event loop
-dpg.create_viewport(title="Filter Frequency Response Visualizer", width=1450, height=1000, resizable=False)
+dpg.create_viewport(title=title, width=1450, height=1000, resizable=False)
 dpg.setup_dearpygui()
 dpg.show_viewport()
 dpg.start_dearpygui()
