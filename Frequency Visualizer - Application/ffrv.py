@@ -9,6 +9,7 @@ import webbrowser
 import pandas as pd
 import datetime
 import os
+import numpy as np
 
 # Application constants
 title = "Filter Frequency Response Visualizer"
@@ -61,15 +62,19 @@ def print_me(sender):
     print(f"[{sender}] was clicked")
 
 def on_drag_line(sender):
-    print(f"Line position: {dpg.get_value(sender)}")
+    print(dpg.get_value(sender))
 
-def on_drag_point(data):
-    print(data)
-    x, y = dpg.get_value(data)
+def on_drag_point(sender):
+    drag_point_value = dpg.get_value(sender)
 
-    closest_index = min(range(len(frequency)), key=lambda i: abs(frequency[i] - x))
+    # Find the index of the frequency that is closest to the drag point
+    drag_x = drag_point_value[0]
+    closest_index = min(range(len(frequency)), key=lambda i: abs(frequency[i] - drag_x))
 
-    dpg.set_value(data, x=frequency[closest_index], y=magnitude[closest_index])
+    # Snap to the closest frequency and associated y-value
+    snap_x = frequency[closest_index]
+    snap_y = magnitude[closest_index]
+    dpg.set_value(sender, [snap_x, snap_y])
 
 def clear_data():
     # Clear the data lists
@@ -359,22 +364,33 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
     with dpg.child_window(label="Raw Data Plot", width=548, height=210, pos=(330, 744), menubar=True):
         with dpg.menu_bar():
             dpg.add_menu(label="Raw Data Plot")
+        dpg.add_text("Magnitude")
         with dpg.group(horizontal=True, tag="raw_checkbox_group"):
             dpg.add_checkbox(label="M0", tag="r_m0_checkbox", default_value=False, callback=add_drag_points)
             dpg.add_checkbox(label="M1", tag="r_m1_checkbox", default_value=False, callback=add_drag_points)
             dpg.add_checkbox(label="M2", tag="r_m2_checkbox", default_value=False, callback=add_drag_points)
             dpg.add_checkbox(label="Raw Plot Drag Lines", default_value=False, callback=add_cursors, tag="r_checkbox", parent="raw_plot")
-        
+        dpg.add_text("Phase")
+        with dpg.group(horizontal=True, tag="raw_checkbox_group_1"):
+            dpg.add_checkbox(label="M0", tag="r_m3_checkbox", default_value=False, callback=add_drag_points)
+            dpg.add_checkbox(label="M1", tag="r_m4_checkbox", default_value=False, callback=add_drag_points)
+            dpg.add_checkbox(label="M2", tag="r_m5_checkbox", default_value=False, callback=add_drag_points)
+
     with dpg.child_window(label="Average Plot Options", width=548, height=210, pos=(882, 744), menubar=True):
         with dpg.menu_bar():
             dpg.add_menu(label="Average Plot Options")
             # Make the below horizontal
+        dpg.add_text("Magnitude")
         with dpg.group(horizontal=True, tag="average_checkbox_group"):
             dpg.add_checkbox(label="M0", tag="a_m0_checkbox", default_value=False, callback=add_drag_points)
             dpg.add_checkbox(label="M1", tag="a_m1_checkbox", default_value=False, callback=add_drag_points)
             dpg.add_checkbox(label="M2", tag="a_m2_checkbox", default_value=False, callback=add_drag_points)
             dpg.add_checkbox(label="Average Plot Drag Lines", default_value=False, callback=add_cursors, tag="a_checkbox", parent="average_plot")
-
+        dpg.add_text("Phase")
+        with dpg.group(horizontal=True, tag="average_checkbox_group_1"):
+            dpg.add_checkbox(label="M0", tag="a_m3_checkbox", default_value=False, callback=add_drag_points)
+            dpg.add_checkbox(label="M1", tag="a_m4_checkbox", default_value=False, callback=add_drag_points)
+            dpg.add_checkbox(label="M2", tag="a_m5_checkbox", default_value=False, callback=add_drag_points)
     with dpg.plot(label="Raw Data Plot", height=350, width=1100, pos=(330, 42), tag="raw_plot"):
         # Optionally create legend
         dpg.add_plot_legend()
@@ -400,9 +416,12 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
         dpg.add_drag_line(label="Raw_Data_2_x", color=[255, 0, 0], thickness=1.0,
                                 vertical=True, show=False, default_value=8000,
                                 callback=on_drag_line, tag="r_drag_line_2")
-        draggable_point = dpg.add_drag_point(label="Raw_Data_1_p", default_value=[0,0], color=[255, 255, 0], tag="r_m0_dragpoint", show=False)
-        dpg.add_drag_point(label="Raw_Data_2_p", default_value=[0,0], color=[255, 255, 0], tag="r_m1_dragpoint", show=False)
-        dpg.add_drag_point(label="Raw_Data_3_p", default_value=[0,0], color=[255, 255, 0], tag="r_m2_dragpoint", show=False)
+        label_names = ["Raw_Data_1_p", "Raw_Data_2_p", "Raw_Data_3_p", "Raw_Data_4_p", "Raw_Data_5_p", "Raw_Data_6_p"]
+        tag_names = ["r_m0_dragpoint", "r_m1_dragpoint", "r_m2_dragpoint", "r_m3_dragpoint", "r_m4_dragpoint", "r_m5_dragpoint"]
+
+        for label, tag in zip(label_names, tag_names):
+            dpg.add_drag_point(label=label, default_value=[0,0], color=[255, 255, 0], tag=tag, show=False, callback=on_drag_point)
+
         
         dpg.bind_item_theme("phase_series_1", "plot_theme")
 
@@ -431,9 +450,12 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
                                 vertical=True, show=False, default_value=8000,
                                 callback=on_drag_line, tag="a_drag_line_2")
         
-        dpg.add_drag_point(label="Average_Data_1_p", default_value=[0,0], color=[255, 255, 0], tag="a_m0_dragpoint", show=False)
-        dpg.add_drag_point(label="Average_Data_2_p", default_value=[0,0], color=[255, 255, 0], tag="a_m1_dragpoint", show=False)
-        dpg.add_drag_point(label="Average_Data_3_p", default_value=[0,0], color=[255, 255, 0], tag="a_m2_dragpoint", show=False)
+        label_names = ["Average_Data_1_p", "Average_Data_2_p", "Average_Data_3_p", "Average_Data_4_p", "Average_Data_5_p", "Average_Data_6_p"]
+        tag_names = ["a_m0_dragpoint", "a_m1_dragpoint", "a_m2_dragpoint", "a_m3_dragpoint", "a_m4_dragpoint", "a_m5_dragpoint"]
+
+        for label, tag in zip(label_names, tag_names):
+            dpg.add_drag_point(label=label, default_value=[0,0], color=[255, 255, 0], tag=tag, show=False, callback=on_drag_point)
+
 
         dpg.bind_item_theme("phase_series_2", "plot_theme")
         
