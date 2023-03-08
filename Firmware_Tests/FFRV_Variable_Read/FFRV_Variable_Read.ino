@@ -14,7 +14,7 @@
 
 #define SAMP_DEC1_US          15000
 #define SAMP_DEC2_US           1500
-#define SAMP_DEC3_US            600 
+#define SAMP_DEC3_US            500 
 
 #define START_FREQ               20
 #define NUM_SAMPLES              10
