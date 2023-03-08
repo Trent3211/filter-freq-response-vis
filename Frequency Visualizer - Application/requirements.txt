@@ -4,3 +4,4 @@ pyscreenshot
 pygetwindow
 Pillow
 pandas
+numpy
