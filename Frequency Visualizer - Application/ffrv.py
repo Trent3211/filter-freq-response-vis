@@ -86,6 +86,8 @@ def clear_data():
     average_phase.clear()
 
 def get_available_ports():
+    # Clear the ports list
+    ports.clear()
 
     # Now that the combo box has been cleared, add the available ports
     for port in serial.tools.list_ports.comports():
@@ -160,6 +162,12 @@ def show_raw_data():
 def show_averaged_data():
     dpg.configure_item('raw_table', show=False)
     dpg.configure_item('average_table', show=True)
+ 
+def update_ports():
+    # Refresh the combo box with the available ports
+    dpg.configure_item('port_name', items=get_available_ports())
+
+
 
 def get_data_from_serial():
     global ser
@@ -337,7 +345,7 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
         with dpg.group(horizontal=True, parent="connect_group"):
             dpg.add_button(label="Connect", callback=on_connect_button, width=111, tag='connect_button')
             dpg.add_button(label="Disconnect", callback=on_disconnect_button, width=111, tag='disconnect_button')
-            dpg.add_button(label="Refresh", callback=print_me, width=65, tag='refresh_button')
+            dpg.add_button(label="Refresh", callback=update_ports, width=65, tag='refresh_button')
             
         # Provide the status of the connection and allow it to be updated
         with dpg.group(horizontal=True, parent="status_group"):
@@ -379,9 +387,9 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
             # Make this a logger textbox
             dpg.add_text(tag="logger")
         
-    with dpg.child_window(label="Raw Data Plot", width=548, height=210, pos=(330, 744), menubar=True):
+    with dpg.child_window(label="Raw Plot Options", width=548, height=210, pos=(330, 744), menubar=True):
         with dpg.menu_bar():
-            dpg.add_menu(label="Raw Data Plot")
+            dpg.add_menu(label="Raw Plot Options (WIP)")
         dpg.add_text("Magnitude")
         with dpg.group(horizontal=True, tag="raw_checkbox_group"):
             dpg.add_checkbox(label="M0", tag="r_m0_checkbox", default_value=False, callback=add_drag_points)
@@ -396,7 +404,7 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
 
     with dpg.child_window(label="Average Plot Options", width=548, height=210, pos=(882, 744), menubar=True):
         with dpg.menu_bar():
-            dpg.add_menu(label="Average Plot Options")
+            dpg.add_menu(label="Average Plot Options (WIP)")
             # Make the below horizontal
         dpg.add_text("Magnitude")
         with dpg.group(horizontal=True, tag="average_checkbox_group"):
