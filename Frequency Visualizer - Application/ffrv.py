@@ -41,8 +41,8 @@ phase_start = -2
 phase_end = 2
 
 # Current directory screenshot folder
-screenshot_path = "./screenshots/"
-data_path = "./data/"
+screenshot_path = "./res/screenshots/"
+data_path = "./res/data/"
 github = "https://github.com/Trent3211/filter-freq-response-vis"
 about = "https://github.com/Trent3211/filter-freq-response-vis/blob/main/README.md"
 documentation = "https://dearpygui.readthedocs.io/en/latest/documentation/plots.html"
