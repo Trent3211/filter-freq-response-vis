@@ -14,7 +14,7 @@ import numpy as np
 # Application constants
 title = "Filter Frequency Response Visualizer"
 # Icon
-icon = "./res/icon.ico"
+icon = "./resources/icon.ico"
 
 ser = None
 magnitude = []
@@ -41,8 +41,8 @@ phase_start = -2
 phase_end = 2
 
 # Current directory screenshot folder
-screenshot_path = "./res/screenshots/"
-data_path = "./res/data/"
+screenshot_path = "./resources/screenshots/"
+data_path = "./resources/data/"
 github = "https://github.com/Trent3211/filter-freq-response-vis"
 about = "https://github.com/Trent3211/filter-freq-response-vis/blob/main/README.md"
 documentation = "https://dearpygui.readthedocs.io/en/latest/documentation/plots.html"
@@ -144,16 +144,16 @@ def add_cursors(sender):
         dpg.configure_item(drag_line_name + "_1", show=False)
         dpg.configure_item(drag_line_name + "_2", show=False)
 
-def add_drag_points(sender, data):
+def add_drag_points(sender):
     # Get the state of the checkbox
     checkbox_name = sender
     drag_point_name = checkbox_name.replace("checkbox", "dragpoint")
 
     # Now write the logic to add the drag points
     if dpg.get_value(checkbox_name):
-        dpg.configure_item(drag_point_name, show=True)
+        dpg.configure_item(drag_point_name, default_value=[2000, 1], show=True)
     else:
-        dpg.configure_item(drag_point_name, show=False)
+        dpg.configure_item(drag_point_name, default_value=[3000, 1], show=False)
 
 def show_raw_data():
     dpg.configure_item('raw_table', show=True)
@@ -177,6 +177,9 @@ def get_data_from_serial():
     global average_frequency
     global average_magnitude
     global average_phase
+
+    last_frequency_value = None
+    last_frequency_values = []
 
     # Clear the data in the raw_table and average_table
     clear_data()
@@ -203,42 +206,52 @@ def get_data_from_serial():
             data = data.split(',')
             if len(data) >= 3:
                 try:
-                    frequency.append(float(data[0]))
-                    magnitude.append(float(data[1]))
-                    phase.append(float(data[2]))
+                    frequency_value = float(data[0])
+                    magnitude_value = round((3.3 / 1023.0) * float(data[1]), 3) # Convert magnitude to volts and round to 3 decimal points
+                    phase_value = round((3.3 / 1023.0) * float(data[2]), 3) # Convert phase to volts and round to 3 decimal points
 
-                    dpg.set_value('phase_series_1', [frequency, phase])
+                    # Append the values to the frequency, magnitude, and phase lists
+                    frequency.append(frequency_value)
+                    magnitude.append(magnitude_value)
+                    phase.append(phase_value)
 
                     dpg.set_value('magnitude_series_1', [frequency, magnitude])
+                    dpg.set_value('phase_series_1', [frequency, phase])
 
                     # Add the data to the table
                     with dpg.table_row(parent="raw_table"):
-                        dpg.add_text(str(frequency[-1]))
-                        dpg.add_text(str(magnitude[-1]))
-                        dpg.add_text(str(phase[-1]))
+                        dpg.add_text(str(frequency_value))
+                        dpg.add_text(str(magnitude_value))
+                        dpg.add_text(str(phase_value))
 
-                    # Create a running average of the data at every 5 points. Plot it and add it to the average_table
-                    if len(frequency) % 5 == 0:
-                        average_frequency.append(sum(frequency[-5:]) / 5)
-                        average_magnitude.append(sum(magnitude[-5:]) / 5)
-                        average_phase.append(sum(phase[-5:]) / 5)
+                    # Check if the frequency value has changed
+                    if frequency_value != last_frequency_value:
+                        if last_frequency_values:
+                            # Compute average magnitude and phase values for the previous set of frequency values
+                            avg_mag = sum([val[0] for val in last_frequency_values]) / len(last_frequency_values)
+                            avg_ph = sum([val[1] for val in last_frequency_values]) / len(last_frequency_values)
+                            average_frequency.append(last_frequency_value)
+                            average_magnitude.append(avg_mag)
+                            average_phase.append(avg_ph)
 
-                        # Round the average values to 2 decimal places
-                        average_frequency[-1] = round(average_frequency[-1], 2)
-                        average_magnitude[-1] = round(average_magnitude[-1], 2)
-                        average_phase[-1] = round(average_phase[-1], 2)
+                            dpg.set_value('phase_series_2', [average_frequency, average_phase])
+                            dpg.set_value('magnitude_series_2', [average_frequency, average_magnitude])
 
-                        dpg.set_value('phase_series_2', [average_frequency, average_phase])
+                            # Add the data to the average_table
+                            with dpg.table_row(parent="average_table"):
+                                dpg.add_text(str(last_frequency_value))
+                                dpg.add_text(str(avg_mag))
+                                dpg.add_text(str(avg_ph))
 
-                        dpg.set_value('magnitude_series_2', [average_frequency, average_magnitude])
+                        # Reset the last_frequency_values list and update the last_frequency_value variable
+                        last_frequency_values = []
+                        last_frequency_value = frequency_value
 
-                        with dpg.table_row(parent="average_table"):
-                            dpg.add_text(str(average_frequency[-1]))
-                            dpg.add_text(str(average_magnitude[-1]))
-                            dpg.add_text(str(average_phase[-1]))
+                    # Append the current magnitude and phase values to the last_frequency_values list
+                    last_frequency_values.append((magnitude_value, phase_value))
 
                 except ValueError:
-                    print("Invalid data: ", data)
+                    print("Invalid data received.")
                     continue
     
     # The plots have axis constraints, but now that the sweep is done, we can set it back to autofit
@@ -337,7 +350,7 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
 
         dpg.add_combo(label="Baud Rate", default_value=115200, items=baud_rate, width=230, tag='baud_rate')
         with dpg.tooltip(dpg.last_item()):
-            dpg.add_text("The baud rate of the serial connection.")
+            dpg.add_text("Match the baud rate of your arduino due to the baud rate of the GUI.")
         dpg.add_combo(label="Port Name", default_value="Select a port...", items=get_available_ports(), width=230, tag='port_name')
         with dpg.tooltip(dpg.last_item()):
             dpg.add_text("Check the device manager to see which port your device is connected to.")
