@@ -1,7 +1,5 @@
 import dearpygui.dearpygui as dpg
 import serial
-import math
-from math import sin, cos
 from serial.serialutil import SerialException
 import serial.tools.list_ports
 import pyscreenshot
@@ -9,7 +7,6 @@ import webbrowser
 import pandas as pd
 import datetime
 import os
-import numpy as np
 
 # Application constants
 title = "Filter Frequency Response Visualizer"
@@ -166,8 +163,6 @@ def show_averaged_data():
 def update_ports():
     # Refresh the combo box with the available ports
     dpg.configure_item('port_name', items=get_available_ports())
-
-
 
 def get_data_from_serial():
     global ser
