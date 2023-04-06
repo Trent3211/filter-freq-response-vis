@@ -48,22 +48,25 @@ dpg.create_context()
 
 def github():
     webbrowser.open(github)
+    log("GitHub page opened in browser.")
 
 def about():
     webbrowser.open(about)
+    log("About page opened in browser.")
 
 def plotting_documentation():
     webbrowser.open(documentation)
+    log("Plotting documentation opened in browser.")
 
 def print_me(sender):
-    print(f"[{sender}] was clicked")
+    log(f"[{sender}] was clicked")
 
 def on_drag_line(sender):
-    print(dpg.get_value(sender))
+    log(dpg.get_value(sender))
 
 def on_drag_point(sender):
     drag_point_value = dpg.get_value(sender)
-
+    log(sender)
     # Find the index of the frequency that is closest to the drag point
     drag_x = drag_point_value[0]
     closest_index = min(range(len(frequency)), key=lambda i: abs(frequency[i] - drag_x))
@@ -93,7 +96,7 @@ def get_available_ports():
 
 def stop_data():
     ser.write(stop_command.encode())
-    print("Sweep stopped")
+    log("Sweep stop flag sent to device on " + ser.name)
 
 def on_connect_button():
     global ser  # Make the ser object global so that it can be used in other functions
@@ -104,22 +107,22 @@ def on_connect_button():
             baudrate=dpg.get_value('baud_rate'),
             timeout=1
         )
-        print("Connected to serial port:", ser.name, "at", ser.baudrate, "baud")
+        log("Connected to serial port:", ser.name, "at", ser.baudrate, "baud")
         dpg.set_value('connection_status', "Connected")
     except SerialException:
-        print(f"Error connecting to device: Serial port {dpg.get_value('port_name')} is not available")
+        log(f"Error connecting to device: Serial port {dpg.get_value('port_name')} is not available")
         return 
 
 def on_disconnect_button():
     global ser  # Make sure the ser object is the same one used in on_connect_button
     if ser is not None and ser.is_open:
         ser.close()
-        print("Disconnected from serial port:", ser.name)
+        log("Disconnected from serial port:", ser.name)
         dpg.set_value('connection_status', "Disconnected")
     elif ser is None:
-        print("Serial port has not been initialized yet.")
+        log("Serial port has not been initialized yet.")
     else:
-        print("Serial port is already closed.")
+        log("Serial port is already closed.")
 
 def set_autofit():
     dpg.set_axis_limits_auto('frequency_axis_1')
@@ -148,9 +151,9 @@ def add_drag_points(sender):
 
     # Now write the logic to add the drag points
     if dpg.get_value(checkbox_name):
-        dpg.configure_item(drag_point_name, default_value=[2000, 1], show=True)
+        dpg.configure_item(drag_point_name, default_value=[2000, 0], show=True)
     else:
-        dpg.configure_item(drag_point_name, default_value=[3000, 1], show=False)
+        dpg.configure_item(drag_point_name, default_value=[3000, 0], show=False)
 
 def show_raw_data():
     dpg.configure_item('raw_table', show=True)
@@ -192,9 +195,9 @@ def get_data_from_serial():
     # Read the data from the serial port until e is read
     while True:
         data = ser.readline().decode('utf-8').strip()
-        print(data)
+        log(data)
         if data.strip() == stop_command: # Edit this for the terminating character
-            print("Sweep completed.")
+            log("Sweep completed.")
             break
         else:
             # Split the data into its frequency, magnitude, and phase components
@@ -246,7 +249,7 @@ def get_data_from_serial():
                     last_frequency_values.append((magnitude_value, phase_value))
 
                 except ValueError:
-                    print("Invalid data received.")
+                    log("Invalid data received.")
                     continue
     
     # The plots have axis constraints, but now that the sweep is done, we can set it back to autofit
@@ -263,7 +266,7 @@ def take_screenshot():
     now = datetime.datetime.now()
     timestamp = now.strftime("%Y-%m-%d_%H-%M-%S")
     im.save(screenshot_path + "screenshot_{}.png".format(timestamp))
-    print("Screenshot saved to", screenshot_path + "screenshot_{}.png".format(timestamp))
+    log("Saved to" + screenshot_path + "screenshot_{}.png".format(timestamp))
 
 def table_to_csv(user_id):
     global frequency
@@ -284,7 +287,7 @@ def table_to_csv(user_id):
         mag = average_magnitude
         ph = average_phase
     else:
-        print("Invalid button ID")
+        log("Invalid button ID")
         return
 
     if len(freq) > 0:
@@ -303,10 +306,16 @@ def table_to_csv(user_id):
         })
         # Save the dataframe to a csv file with the syntax "data_type_YYYY-MM-DD_HH-MM-SS.csv"
         df.to_csv(data_path + "{}_data_{}.csv".format(data_type, timestamp), index=False)
-        print("{} data saved to".format(data_type.capitalize()), data_path + "{}_data_{}.csv".format(data_type, timestamp))
+        log("{} data saved to".format(data_type.capitalize()), data_path + "{}_data_{}.csv".format(data_type, timestamp))
     else:
-        print("No data to save")
+        log("No data to save")
     
+def log(message):
+    current_value = dpg.get_value('logger_text')
+    if current_value == "":
+        dpg.set_value('logger_text', "[LOG] " + message)
+    else:
+        dpg.set_value('logger_text', f"{current_value}\n[LOG] {message}")
 
 # ---------- BEGINNING OF GUI CODE ---------- #
 
@@ -325,6 +334,8 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
 
         with dpg.menu(label="Sweep"):
             dpg.add_menu_item(label="Start Sweep", callback=get_data_from_serial)
+            # Add the stop sweep button and send the stop command to the serial port
+            dpg.add_menu_item(label="Stop Sweep", callback=stop_data)
 
         with dpg.menu(label="Screenshot"):
             dpg.add_menu_item(label="Save Application Screenshot", callback=take_screenshot)
@@ -389,13 +400,13 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
                     c3 = dpg.add_table_column(label="Phase (deg)", width_fixed=True, init_width_or_weight=90)
 
     # Logger Child Window #
-    with dpg.child_window(label="Object Window", width=320, height=210, pos=(6, 744), menubar=True):
+    with dpg.child_window(label="Object Window", width=520, height=210, pos=(6, 744), menubar=True):
         with dpg.menu_bar():
             dpg.add_button(label="Clear", callback=print_me)
-            # Make this a logger textbox
-            dpg.add_text(tag="logger")
+        # Add the logger textbox with a font size of 8, the logger tag is logger_text
+        dpg.add_input_text(tag="logger_text", width=504, height=172, enabled=False, multiline=True)
         
-    with dpg.child_window(label="Raw Plot Options", width=548, height=210, pos=(330, 744), menubar=True):
+    with dpg.child_window(label="Raw Plot Options", width=450, height=210, pos=(528, 744), menubar=True):
         with dpg.menu_bar():
             dpg.add_menu(label="Raw Plot Options (WIP)")
         dpg.add_text("Magnitude")
@@ -410,7 +421,7 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
             dpg.add_checkbox(label="M1", tag="r_m4_checkbox", default_value=False, callback=add_drag_points)
             dpg.add_checkbox(label="M2", tag="r_m5_checkbox", default_value=False, callback=add_drag_points)
 
-    with dpg.child_window(label="Average Plot Options", width=548, height=210, pos=(882, 744), menubar=True):
+    with dpg.child_window(label="Average Plot Options", width=450, height=210, pos=(980, 744), menubar=True):
         with dpg.menu_bar():
             dpg.add_menu(label="Average Plot Options (WIP)")
             # Make the below horizontal
@@ -474,8 +485,8 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
             dpg.set_axis_limits(dpg.last_item(), mag_start, mag_end)
 
         # Set a placeholder for the magnitude data
-        dpg.add_line_series([0, 0], [0, 0], label="Magnitude", parent="frequency_axis_2", tag="magnitude_series_2")
         dpg.add_line_series([0, 0], [0, 0], label="Phase", parent="phase_axis_2", tag="phase_series_2")
+        dpg.add_line_series([0, 0], [0, 0], label="Magnitude", parent="magnitude_axis_2", tag="magnitude_series_2")
 
         dpg.add_drag_line(label="Average_Data_1_x", color=[0, 255, 0], thickness=1.0,
                                 vertical=True, show=False, default_value=100,
