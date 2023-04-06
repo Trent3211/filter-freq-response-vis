@@ -156,16 +156,19 @@ def add_drag_points(sender):
         dpg.configure_item(drag_point_name, default_value=[3000, 0], show=False)
 
 def show_raw_data():
+    dpg.configure_item('data_menu', label='Raw Data')
     dpg.configure_item('raw_table', show=True)
     dpg.configure_item('average_table', show=False)
 
 def show_averaged_data():
+    dpg.configure_item('data_menu', label='Averaged Data')
     dpg.configure_item('raw_table', show=False)
     dpg.configure_item('average_table', show=True)
  
 def update_ports():
     # Refresh the combo box with the available ports
     dpg.configure_item('port_name', items=get_available_ports())
+    log("Available ports refreshed.")
 
 def get_data_from_serial():
     global ser
@@ -256,7 +259,7 @@ def get_data_from_serial():
     set_autofit()
 
     # Show the raw table
-    show_raw_data()
+    #show_raw_data()
 
     # Send
 
@@ -374,7 +377,7 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
     # Data Child Window #
     with dpg.child_window(label="Object Window", width=320, height=560, pos=(6, 180), menubar=True):
         with dpg.menu_bar():
-            with dpg.menu(label="Select Data to Show"):
+            with dpg.menu(label="Raw Data", tag="data_menu"):
                 dpg.add_menu_item(label="Raw Data", callback=show_raw_data)
                 dpg.add_menu_item(label="Averaged Data", callback=show_averaged_data)
             
@@ -383,7 +386,7 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
                                         borders_innerH=True, borders_outerH=True, borders_innerV=True,
                                         borders_outerV=True, row_background=True, hideable=False, reorderable=False,
                                         resizable=False, sortable=False, policy=dpg.mvTable_SizingFixedFit,
-                                        scrollX=False, delay_search=True, scrollY=True, show=False):
+                                        scrollX=False, delay_search=True, scrollY=True, show=True):
 
                     c1 = dpg.add_table_column(label="Freq. (Hz)", width_fixed=True, init_width_or_weight=90)
                     c2 = dpg.add_table_column(label="Mag. (dB)", width_fixed=True, init_width_or_weight=90)
