@@ -1,7 +1,0 @@
-README.txt
-setup.py
-Filter_Frequency_Response_Visualizer.egg-info/PKG-INFO
-Filter_Frequency_Response_Visualizer.egg-info/SOURCES.txt
-Filter_Frequency_Response_Visualizer.egg-info/dependency_links.txt
-Filter_Frequency_Response_Visualizer.egg-info/requires.txt
-Filter_Frequency_Response_Visualizer.egg-info/top_level.txt

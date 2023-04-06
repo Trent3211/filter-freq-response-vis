@@ -14,6 +14,7 @@ setup(
         'pygetwindow',
         'Pillow',
         'pandas',
-        'numpy'
+        'numpy',
+        'tkinter'
     ],
 )

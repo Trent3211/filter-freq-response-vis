@@ -5,3 +5,4 @@ pygetwindow
 Pillow
 pandas
 numpy
+tkinter
