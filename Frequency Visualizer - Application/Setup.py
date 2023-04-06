@@ -1,12 +1,11 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name='Filter Frequency Response Visualizer',
-    version='1.0.0',
+    version='0.1',
     description='Visualizing the frequency response of a filter',
     author='Team 18',
-    author_email='',
-    packages=find_packages(),
+    packages=[''],
     install_requires=[
         'dearpygui',
         'pyserial',
@@ -15,6 +14,11 @@ setup(
         'Pillow',
         'pandas',
         'numpy',
-        'tkinter'
+        'tk'
     ],
+    entry_points={
+        'console_scripts': [
+        ]
+    }
 )
+
