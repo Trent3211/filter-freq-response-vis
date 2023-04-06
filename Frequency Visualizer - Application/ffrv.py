@@ -168,7 +168,7 @@ def show_averaged_data():
 def update_ports():
     # Refresh the combo box with the available ports
     dpg.configure_item('port_name', items=get_available_ports())
-    log("Available ports refreshed.")
+    log("Available ports have been refreshed.")
 
 def get_data_from_serial():
     global ser

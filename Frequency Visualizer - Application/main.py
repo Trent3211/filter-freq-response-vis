@@ -53,7 +53,7 @@ def close_splash():
     os.system("python ffrv.py")
 
 # Set a timer to close the splash screen after 15 seconds
-root.after(3000, close_splash)
+root.after(15000, close_splash)
 
 # Update the status bar
 update_status('Loading...')
