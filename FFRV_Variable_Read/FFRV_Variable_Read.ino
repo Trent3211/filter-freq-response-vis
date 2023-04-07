@@ -93,6 +93,7 @@ void loop() {
         mode = MODE_SWEEP;
         digitalWrite(READY, LOW);
         digitalWrite(SWEEPING, HIGH);
+        digitalWrite(DISCHARGE_PIN, 0);
       } 
       else {
         return;
@@ -206,6 +207,7 @@ void ffrvReset() {
   freq = 0;
   decadeNum = 0;
   sampleCount = 0;
+  digitalWrite(DISCHARGE_PIN, 1);
   Serial.println("e");
 }
 
