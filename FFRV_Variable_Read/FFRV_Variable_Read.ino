@@ -204,7 +204,6 @@ void ffrvReset() {
   freq = 0;
   decadeNum = 0;
   sampleCount = 0;
-  AD9850.wr_serial(0, 0);
   Serial.println("e");
 }
 
