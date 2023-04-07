@@ -107,7 +107,7 @@ def on_connect_button():
             baudrate=dpg.get_value('baud_rate'),
             timeout=1
         )
-        log("Connected to serial port:" + ser.name + " at " + ser.baudrate + " baud")
+        log("Connected to serial port:" + ser.name + " at " + str(ser.baudrate) + " baud")
         dpg.set_value('connection_status', "Connected")
     except SerialException:
         log(f"Error connecting to device: Serial port {dpg.get_value('port_name')} is not available")
