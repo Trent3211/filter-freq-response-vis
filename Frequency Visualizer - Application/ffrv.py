@@ -5,6 +5,7 @@ import serial.tools.list_ports
 import pyscreenshot
 import webbrowser
 import pandas as pd
+import math
 import datetime
 import os
 
@@ -107,7 +108,7 @@ def on_connect_button():
             baudrate=dpg.get_value('baud_rate'),
             timeout=1
         )
-        log("Connected to serial port:", ser.name, "at", ser.baudrate, "baud")
+        log("Connected to serial port: " + ser.name + " at " + str(ser.baudrate) + " baud")
         dpg.set_value('connection_status', "Connected")
     except SerialException:
         log(f"Error connecting to device: Serial port {dpg.get_value('port_name')} is not available")
@@ -117,7 +118,7 @@ def on_disconnect_button():
     global ser  # Make sure the ser object is the same one used in on_connect_button
     if ser is not None and ser.is_open:
         ser.close()
-        log("Disconnected from serial port:", ser.name)
+        log("Disconnected from serial port: " + ser.name)
         dpg.set_value('connection_status', "Disconnected")
     elif ser is None:
         log("Serial port has not been initialized yet.")
@@ -208,8 +209,8 @@ def get_data_from_serial():
             if len(data) >= 3:
                 try:
                     frequency_value = float(data[0])
-                    magnitude_value = round((3.3 / 1023.0) * float(data[1]), 3) # Convert magnitude to volts and round to 3 decimal points
-                    phase_value = round((3.3 / 1023.0) * float(data[2]), 3) # Convert phase to volts and round to 3 decimal points
+                    magnitude_value = round((3.3 / 4095.0) * float(data[1]), 3) # Convert magnitude to volts and round to 3 decimal points
+                    phase_value = round((3.3 / 4095.0) * float(data[2]), 3) # Convert phase to volts and round to 3 decimal points
 
                     # Append the values to the frequency, magnitude, and phase lists
                     frequency.append(frequency_value)
@@ -320,7 +321,7 @@ def log(message):
     else:
         dpg.set_value('logger_text', f"{current_value}\n[LOG] {message}")
 
-# ---------- BEGINNING OF GUI CODE ---------- #
+#---------- BEGINNING OF GUI CODE ---------- #
 
 with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag="main_window"):      
     with dpg.theme(tag="plot_theme"):
