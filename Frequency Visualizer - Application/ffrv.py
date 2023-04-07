@@ -96,7 +96,7 @@ def get_available_ports():
 
 def stop_data():
     ser.write(stop_command.encode())
-    print("Sweep stop flag sent to device on " + ser.name)
+    log("Sweep stop flag sent to device on " + ser.name)
 
 def on_connect_button():
     global ser  # Make the ser object global so that it can be used in other functions
@@ -107,7 +107,7 @@ def on_connect_button():
             baudrate=dpg.get_value('baud_rate'),
             timeout=1
         )
-        print("Connected to serial port:", ser.name + "at" + ser.baudrate + "baud")
+        log("Connected to serial port:" + ser.name + " at " + ser.baudrate + " baud")
         dpg.set_value('connection_status', "Connected")
     except SerialException:
         log(f"Error connecting to device: Serial port {dpg.get_value('port_name')} is not available")
@@ -117,7 +117,7 @@ def on_disconnect_button():
     global ser  # Make sure the ser object is the same one used in on_connect_button
     if ser is not None and ser.is_open:
         ser.close()
-        log("Disconnected from serial port:", ser.name)
+        log("Disconnected from serial port: " + ser.name)
         dpg.set_value('connection_status', "Disconnected")
     elif ser is None:
         log("Serial port has not been initialized yet.")
@@ -309,7 +309,7 @@ def table_to_csv(user_id):
         })
         # Save the dataframe to a csv file with the syntax "data_type_YYYY-MM-DD_HH-MM-SS.csv"
         df.to_csv(data_path + "{}_data_{}.csv".format(data_type, timestamp), index=False)
-        log("{} data saved to".format(data_type.capitalize()), data_path + "{}_data_{}.csv".format(data_type, timestamp))
+        log("{} data saved to".format(data_type.capitalize()) + data_path + "{}_data_{}.csv".format(data_type, timestamp))
     else:
         log("No data to save")
     
