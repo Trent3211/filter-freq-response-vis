@@ -69,6 +69,8 @@ void setup() {
   digitalWrite(DISCHARGE_PIN, 0);
   digitalWrite(TEST_PIN, 0);
 
+  analogSetup(); // god why
+
   DueTimerInterrupt frequencySweepInterrupt = DueTimer.getAvailable();
   frequencySweepInterrupt.attachInterruptInterval(SWEEP_DEC1_US, sweepStep);
   sweepInterruptID = frequencySweepInterrupt.getTimerNumber();
