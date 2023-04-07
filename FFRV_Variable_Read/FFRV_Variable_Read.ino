@@ -24,6 +24,11 @@
 #define MAS_PIN                   7      // A0
 #define PAS_PIN                   6      // A1
 
+// led definitions
+#define READY                     5
+#define SWEEPING                  4
+#define FAULT                     3
+
 #define MODE_FINI                 2
 #define MODE_SWEEP                1
 #define MODE_WAIT                 0
@@ -56,6 +61,11 @@ void setup() {
   AD9850.reset();
   pinMode(DISCHARGE_PIN, OUTPUT);
   pinMode(TEST_PIN, OUTPUT);
+  // led pin modes
+  pinMode(READY, OUTPUT);
+  pinMode(SWEEPING, OUTPUT);
+  pinMode(FAULT, OUTPUT);
+  digitalWrite(READY, HIGH);
   digitalWrite(DISCHARGE_PIN, 0);
   digitalWrite(TEST_PIN, 0);
 
@@ -79,16 +89,20 @@ void loop() {
       char charIn = Serial.read();
       if (charIn == 's'){
         mode = MODE_SWEEP;
+        digitalWrite(READY, LOW);
+        digitalWrite(SWEEPING, HIGH);
       } 
       else {
         return;
       }
     } 
-    else {
+    else { 
       return;
     }
   }
   else if (mode == MODE_FINI){
+    digitalWrite(SWEEPING, LOW);
+    digitalWrite(READY, HIGH);
     ffrvReset();
   }
   if (mode != MODE_SWEEP){
