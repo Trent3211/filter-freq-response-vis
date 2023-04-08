@@ -322,13 +322,18 @@ def table_to_csv(user_id):
         log("{} data saved to".format(data_type.capitalize()) + data_path + "{}_data_{}.csv".format(data_type, timestamp))
     else:
         log("No data to save")
+
+def clear_log(self):
+    dpg.delete_item('logger_text', children_only=True)
+    self.count = 0
     
 def log(message):
-    current_value = dpg.get_value('logger_text')
+    current_value = dpg.get_value('logger_box')
     if current_value == "":
-        dpg.set_value('logger_text', "[LOG] " + message)
+        dpg.set_value('logger_box', "[LOG] " + message)
     else:
-        dpg.set_value('logger_text', f"{current_value}\n[LOG] {message}")
+        dpg.set_value('logger_box', f"{current_value}\n[LOG] {message}")
+        dpg.set_y_scroll('logger_text', -1.0)
 
 # ---------- BEGINNING OF GUI CODE ---------- #
 
@@ -413,11 +418,12 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
                     c3 = dpg.add_table_column(label="Phase (deg)", width_fixed=True, init_width_or_weight=90)
 
     # Logger Child Window #
-    with dpg.child_window(label="Object Window", width=520, height=210, pos=(6, 744), menubar=True):
+    with dpg.child_window(tag="logger_text", label="Object Window", width=520, height=210, pos=(6, 744), menubar=True):
         with dpg.menu_bar():
             dpg.add_button(label="Clear", callback=print_me)
         # Add the logger textbox with a font size of 8, the logger tag is logger_text
-        dpg.add_input_text(tag="logger_text", width=504, height=172, enabled=False, multiline=True)
+        dpg.add_text(tag="logger_box")
+        #dpg.add_input_text(tag="logger_text", width=504, height=172, enabled=False, multiline=True)
         
     with dpg.child_window(label="Raw Plot Options", width=450, height=210, pos=(528, 744), menubar=True):
         with dpg.menu_bar():
