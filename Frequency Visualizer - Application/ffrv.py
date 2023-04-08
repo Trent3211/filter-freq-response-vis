@@ -3,6 +3,7 @@ import serial
 from serial.serialutil import SerialException
 import serial.tools.list_ports
 import pyscreenshot
+import pygetwindow
 import webbrowser
 import pandas as pd
 import datetime
@@ -102,6 +103,9 @@ def stop_data():
 def on_connect_button():
     global ser  # Make the ser object global so that it can be used in other functions
     try:
+        if dpg.get_value('port_name') == "Select a port...":
+            raise SerialException("Please select a valid serial port.")
+            
         ser = serial.Serial(
             # The port name is the selected item in the combo box, but it must be parsed to remove the description
             port=dpg.get_value('port_name').split(" - ")[0],
@@ -110,9 +114,10 @@ def on_connect_button():
         )
         log("Connected to serial port:" + ser.name + " at " + str(ser.baudrate) + " baud")
         dpg.set_value('connection_status', "Connected")
-    except SerialException:
-        log(f"Error connecting to device: Serial port {dpg.get_value('port_name')} is not available")
-        return 
+    except SerialException as e:
+        log(f"Error connecting to device: {e}")
+    return
+
 
 def on_disconnect_button():
     global ser  # Make sure the ser object is the same one used in on_connect_button
@@ -197,13 +202,21 @@ def get_data_from_serial():
         dpg.delete_item(child)
 
     # Read the data from the serial port until e is read
+    num_consecutive_empty_reads = 0
+    max_consecutive_empty_reads = 10
     while True:
         data = ser.readline().decode('utf-8').strip()
         log(data)
         if data.strip() == stop_command: # Edit this for the terminating character
             log("Sweep completed.")
             break
+        elif not data:
+            num_consecutive_empty_reads += 1
+            if num_consecutive_empty_reads >= max_consecutive_empty_reads:
+                log("No data received, stopping the check for the sweep.")
+                break
         else:
+            num_consecutive_empty_reads = 0
             # Split the data into its frequency, magnitude, and phase components
             data = data.split(',')
             if len(data) >= 3:
@@ -259,11 +272,6 @@ def get_data_from_serial():
     
     # The plots have axis constraints, but now that the sweep is done, we can set it back to autofit
     set_autofit()
-
-    # Show the raw table
-    #show_raw_data()
-
-    # Send
 
 def take_screenshot():
     # Just take a screenshot of the entire window
