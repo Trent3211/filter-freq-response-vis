@@ -222,7 +222,7 @@ def get_data_from_serial():
             if len(data) >= 3:
                 try:
                     frequency_value = float(data[0])
-                    magnitude_value = round((3.3 / 4095.0) * float(data[1]), 3) # Convert magnitude to volts and round to 3 decimal points
+                    magnitude_value = (3.3 / 4095.0) * float(data[1]) # Convert magnitude to volts and round to 3 decimal points
                     phase_value = round((3.3 / 4095.0) * float(data[2]), 3) # Convert phase to volts and round to 3 decimal points
                     magnitude_value = round(20*(math.log10(magnitude_value)), 5)
 
