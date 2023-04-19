@@ -86,6 +86,7 @@ void setup() {
 
 
 void loop() {
+  digitalWrite(FAULT, LOW);
   if (mode == MODE_WAIT){
     if (Serial.available() > 0){
       char charIn = Serial.read();
@@ -100,6 +101,7 @@ void loop() {
       }
     } 
     else { 
+      digitalWrite(FAULT, HIGH);
       return;
     }
   }
