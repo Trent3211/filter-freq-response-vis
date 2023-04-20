@@ -65,11 +65,14 @@ void setup() {
   pinMode(READY, OUTPUT);
   pinMode(SWEEPING, OUTPUT);
   pinMode(FAULT, OUTPUT);
-  digitalWrite(READY, HIGH);
+  
   digitalWrite(DISCHARGE_PIN, 0);
   digitalWrite(TEST_PIN, 0);
+  digitalWrite(FAULT, HIGH);
 
   analogSetup(); // god why
+
+  
 
   DueTimerInterrupt frequencySweepInterrupt = DueTimer.getAvailable();
   frequencySweepInterrupt.attachInterruptInterval(SWEEP_DEC1_US, sweepStep);
@@ -82,11 +85,21 @@ void setup() {
   readInterruptID = samplingInterrupt.getTimerNumber();
   Serial.print("SampID_START = ");
   Serial.println(readInterruptID);
+
+  while (1) {
+    if (Serial.available() > 0){
+      char charIn = Serial.read();
+      if (charIn == '!'){
+        digitalWrite(FAULT, LOW);
+        digitalWrite(READY, HIGH);
+        return;
+      } 
+    } 
+  } 
 }
 
 
 void loop() {
-  digitalWrite(FAULT, LOW);
   if (mode == MODE_WAIT){
     if (Serial.available() > 0){
       char charIn = Serial.read();
@@ -101,7 +114,6 @@ void loop() {
       }
     } 
     else { 
-      digitalWrite(FAULT, HIGH);
       return;
     }
   }
