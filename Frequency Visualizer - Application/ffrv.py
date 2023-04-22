@@ -34,10 +34,10 @@ baud_rate = [9600, 19200, 38400, 57600, 115200]
 # Plot axis constraints
 freq_start = 20
 freq_end = 30000
-mag_start = -60
-mag_end = 60
-phase_start = -225
-phase_end = 225
+mag_min = -60
+mag_max = 60
+phase_min = -225
+phase_max = 225
 
 # Current directory screenshot folder
 screenshot_path = "./resources/screenshots/"
@@ -271,6 +271,28 @@ def get_data_from_serial():
     # The plots have axis constraints, but now that the sweep is done, we can set it back to autofit
     set_autofit()
 
+# Make a set_axis_min_max function that takes the button that is pressed, and then determines whether it's the phase or magnitude plot.. Then it sets the axis to what is in the text boxes:
+# p_min_axis and p_max_axis for phase
+# m_min_axis and m_max_axis for magnitude
+
+def set_axis_min_max(user_data):
+
+    if user_data == "p_axis_btn":
+        phase_min = dpg.get_value('p_min_axis')
+        phase_max = dpg.get_value('p_max_axis')
+        log("New phase axis limits: " + phase_min + " " + phase_max + "")
+        # Now set the axis limits for the phase plot
+        dpg.set_axis_limits('phase_axis_1', int(phase_min), int(phase_max))
+    elif user_data == "m_axis_btn":
+        mag_min = dpg.get_value('m_min_axis')
+        mag_max = dpg.get_value('m_max_axis')
+        log("New magnitude axis limits: " + mag_min + " " + mag_max + "")
+        # Now set the axis limits for the magnitude plot
+        dpg.set_axis_limits('magnitude_axis_1', int(mag_min), int(mag_max))
+    else:
+        log("Invalid button ID")
+
+
 def take_screenshot():
     # Just take a screenshot of the entire window
     im = pyscreenshot.grab()
@@ -321,9 +343,8 @@ def table_to_csv(user_id):
     else:
         log("No data to save")
 
-def clear_log(self):
-    dpg.delete_item('logger_text', children_only=True)
-    self.count = 0
+def clear_log():
+    dpg.set_value('logger_box', "")
     
 def log(message):
     current_value = dpg.get_value('logger_box')
@@ -421,42 +442,63 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
 
     # Logger Child Window #
     with dpg.child_window(tag="logger_text", label="Object Window", width=520, height=210, pos=(6, 744), menubar=True):
-        with dpg.menu_bar():
-            dpg.add_button(label="Clear", callback=print_me)
+        with dpg.menu_bar(label=""):
+            dpg.add_menu(label="Logging Window")
+            dpg.add_button(label="Clear", callback=clear_log, pos=(450, 0), width=70, height=20)
         # Add the logger textbox with a font size of 8, the logger tag is logger_text
         dpg.add_text(tag="logger_box")
-        #dpg.add_input_text(tag="logger_text", width=504, height=172, enabled=False, multiline=True)
         
-    with dpg.child_window(label="Raw Plot Options", width=450, height=210, pos=(528, 744), menubar=True):
+    with dpg.child_window(label="Phase Plot Options", width=450, height=210, pos=(528, 744), menubar=True):
         with dpg.menu_bar():
-            dpg.add_menu(label="Raw Plot Options (WIP)")
-        dpg.add_text("Magnitude")
-        with dpg.group(horizontal=True, tag="raw_checkbox_group"):
-            dpg.add_checkbox(label="M0", tag="r_m0_checkbox", default_value=False, callback=add_drag_points)
-            dpg.add_checkbox(label="M1", tag="r_m1_checkbox", default_value=False, callback=add_drag_points)
-            dpg.add_checkbox(label="M2", tag="r_m2_checkbox", default_value=False, callback=add_drag_points)
-            dpg.add_checkbox(label="Raw Plot Drag Lines", default_value=False, callback=add_cursors, tag="r_checkbox", parent="phase_plot")
-        dpg.add_text("Phase")
-        with dpg.group(horizontal=True, tag="raw_checkbox_group_1"):
-            dpg.add_checkbox(label="M0", tag="r_m3_checkbox", default_value=False, callback=add_drag_points)
-            dpg.add_checkbox(label="M1", tag="r_m4_checkbox", default_value=False, callback=add_drag_points)
-            dpg.add_checkbox(label="M2", tag="r_m5_checkbox", default_value=False, callback=add_drag_points)
+            dpg.add_menu(label="Phase Plot Options")
+        # Checkbox grouping #
+        with dpg.group(horizontal=True, tag="phase_checkbox_group"):
+            dpg.add_checkbox(label="M0", tag="p_m0_checkbox", default_value=False, callback=add_drag_points)
+            dpg.add_checkbox(label="M1", tag="p_m1_checkbox", default_value=False, callback=add_drag_points)
+            dpg.add_checkbox(label="M2", tag="p_m2_checkbox", default_value=False, callback=add_drag_points)
+            dpg.add_checkbox(label="Phase Plot Drag Lines", default_value=False, callback=add_cursors, tag="p_checkbox", parent="phase_plot")
 
-    with dpg.child_window(label="Average Plot Options", width=450, height=210, pos=(980, 744), menubar=True):
+        with dpg.group(horizontal=True, tag="phase_axis_min_group"):
+            # Two text and two text boxes, one for min axis value, and one for maximum axis value for the phase
+            dpg.add_text("Phase Axis Minimum")
+            dpg.add_input_text(default_value=phase_min, tag="p_min_axis", callback=print_me, width=50)
+
+        with dpg.group(horizontal=True, tag="phase_axis_max_group"):
+            dpg.add_text("Phase Axis Maximum")
+            dpg.add_input_text(default_value=phase_max, tag="p_max_axis", callback=print_me, width=50)
+
+        with dpg.group(horizontal=True, tag="phase_axis_btn_group"):
+            dpg.add_button(label="Set Phase Axis", callback=set_axis_min_max, width=150, user_data=37, tag="p_axis_btn")
+            # Add a button for auto fit
+            dpg.add_button(label="Auto Fit", callback=set_autofit, width=150, user_data=40, tag="p_autofit_btn")
+        
+
+    with dpg.child_window(label="Magnitude Plot Options", width=450, height=210, pos=(980, 744), menubar=True):
         with dpg.menu_bar():
-            dpg.add_menu(label="Average Plot Options (WIP)")
+            dpg.add_menu(label="Magnitude Plot Options")
             # Make the below horizontal
-        dpg.add_text("Magnitude")
-        with dpg.group(horizontal=True, tag="average_checkbox_group"):
-            dpg.add_checkbox(label="M0", tag="a_m0_checkbox", default_value=False, callback=add_drag_points)
-            dpg.add_checkbox(label="M1", tag="a_m1_checkbox", default_value=False, callback=add_drag_points)
-            dpg.add_checkbox(label="M2", tag="a_m2_checkbox", default_value=False, callback=add_drag_points)
-            dpg.add_checkbox(label="Average Plot Drag Lines", default_value=False, callback=add_cursors, tag="a_checkbox", parent="average_plot")
-        dpg.add_text("Phase")
-        with dpg.group(horizontal=True, tag="average_checkbox_group_1"):
-            dpg.add_checkbox(label="M0", tag="a_m3_checkbox", default_value=False, callback=add_drag_points)
-            dpg.add_checkbox(label="M1", tag="a_m4_checkbox", default_value=False, callback=add_drag_points)
-            dpg.add_checkbox(label="M2", tag="a_m5_checkbox", default_value=False, callback=add_drag_points)
+        with dpg.group(horizontal=True, tag="magnitude_checkbox_group"):
+            dpg.add_checkbox(label="M0", tag="m_m0_checkbox", default_value=False, callback=add_drag_points)
+            dpg.add_checkbox(label="M1", tag="m_m1_checkbox", default_value=False, callback=add_drag_points)
+            dpg.add_checkbox(label="M2", tag="m_m2_checkbox", default_value=False, callback=add_drag_points)
+            dpg.add_checkbox(label="Magnitude Plot Drag Lines", default_value=False, callback=add_cursors, tag="m_checkbox", parent="magnitude_plot")
+
+        # Do the same thing for the magnitude axis as is done with the phase axis
+        with dpg.group(horizontal=True, tag="magnitude_axis_min_group"):
+            dpg.add_text("Magnitude Axis Minimum")
+            dpg.add_input_text(default_value=mag_min, tag="m_min_axis", callback=print_me, width=50)
+
+        with dpg.group(horizontal=True, tag="magnitude_axis_max_group"):
+            dpg.add_text("Magnitude Axis Maximum")
+            dpg.add_input_text(default_value=mag_max, tag="m_max_axis", callback=print_me, width=50)
+        
+        with dpg.group(horizontal=True, tag="magnitude_axis_btn_group"):
+            dpg.add_button(label="Set Magnitude Axis", callback=set_axis_min_max, width=150, user_data=41, tag="m_axis_btn")
+            # Add a button for auto fit
+            dpg.add_button(label="Auto Fit", callback=set_autofit, width=150, user_data=38, tag="m_autofit_btn")
+
+    # Phase Plot #
+
     with dpg.plot(label="Phase Plot", height=350, width=1100, pos=(330, 42), tag="phase_plot"):
         # Optionally create legend
         dpg.add_plot_legend(horizontal=True)
@@ -466,50 +508,46 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
         dpg.set_axis_limits(dpg.last_item(), freq_start, freq_end)
 
         with dpg.plot_axis(dpg.mvYAxis, label="Phase (deg)", tag="phase_axis_1"):
-            dpg.set_axis_limits(dpg.last_item(), phase_start, phase_end)
+            dpg.set_axis_limits(dpg.last_item(), phase_min, phase_max)
 
         dpg.add_line_series([0, 0], [0, 0], label="Phase", parent="phase_axis_1", tag="phase_series_1")
 
         # Average Plot Drag Lines and Points
-        dpg.add_drag_line(label="Raw_Data_1_x", color=[255, 0, 0], thickness=1.0,
-                                vertical=True, show=False, default_value=100,
-                                callback=on_drag_line, tag="r_drag_line_1")
+        dpg.add_drag_line(label="Phase_Data_1_x", color=[255, 0, 0], thickness=1.0,
+                                vertical=True, show=False, default_value=100, tag="p_drag_line_1")
         
-        dpg.add_drag_line(label="Raw_Data_2_x", color=[255, 0, 0], thickness=1.0,
-                                vertical=True, show=False, default_value=6000,
-                                callback=on_drag_line, tag="r_drag_line_2")
+        dpg.add_drag_line(label="Phase_Data_2_x", color=[255, 0, 0], thickness=1.0,
+                                vertical=True, show=False, default_value=6000, tag="p_drag_line_2")
         
-        label_names = ["Raw_Data_1_p", "Raw_Data_2_p", "Raw_Data_3_p", "Raw_Data_4_p", "Raw_Data_5_p", "Raw_Data_6_p"]
-        tag_names = ["r_m0_dragpoint", "r_m1_dragpoint", "r_m2_dragpoint", "r_m3_dragpoint", "r_m4_dragpoint", "r_m5_dragpoint"]
+        label_names = ["Phase_Data_1_p", "Phase_Data_2_p", "Phase_Data_3_p", "Phase_Data_4_p", "Phase_Data_5_p", "Phase_Data_6_p"]
+        tag_names = ["p_m0_dragpoint", "p_m1_dragpoint", "p_m2_dragpoint", "p_m3_dragpoint", "p_m4_dragpoint", "p_m5_dragpoint"]
         
         for label, tag in zip(label_names, tag_names):
             dpg.add_drag_point(label=label, default_value=[0,0], color=[255, 255, 0], tag=tag, show=False, callback=on_drag_point)
 
         dpg.bind_item_theme("phase_series_1", "phase_theme")
 
-    # Make a second plot for the Magnitude
-    with dpg.plot(label="Magnitude Plot", height=350, width=1100, pos=(330, 391), tag="average_plot"):
+    # Magnitude Plot #
+    with dpg.plot(label="Magnitude Plot", height=350, width=1100, pos=(330, 391), tag="magnitude_plot"):
         dpg.add_plot_legend(horizontal=True)
 
         dpg.add_plot_axis(dpg.mvXAxis, label="Frequency (Hz)", log_scale=True, tag="frequency_axis_2")
         dpg.set_axis_limits(dpg.last_item(), freq_start, freq_end)
         
         with dpg.plot_axis(dpg.mvYAxis, label="Magnitude (dB)", tag="magnitude_axis_1"):
-            dpg.set_axis_limits(dpg.last_item(), mag_start, mag_end)
+            dpg.set_axis_limits(dpg.last_item(), mag_min, mag_max)
 
         # Set a placeholder for the magnitude data
         dpg.add_line_series([0, 0], [0, 0], label="Magnitude", parent="magnitude_axis_1", tag="magnitude_series_1")
 
-        dpg.add_drag_line(label="Average_Data_1_x", color=[0, 255, 0], thickness=1.0,
-                                vertical=True, show=False, default_value=100,
-                                callback=on_drag_line, tag="a_drag_line_1")
+        dpg.add_drag_line(label="Magnitude_Data_1_x", color=[0, 255, 0], thickness=1.0,
+                                vertical=True, show=False, default_value=100, tag="m_drag_line_1")
         
-        dpg.add_drag_line(label="Average_Data_2_x", color=[0, 255, 0], thickness=1.0,
-                                vertical=True, show=False, default_value=6000,
-                                callback=on_drag_line, tag="a_drag_line_2")
+        dpg.add_drag_line(label="Magnitude_Data_2_x", color=[0, 255, 0], thickness=1.0,
+                                vertical=True, show=False, default_value=6000, tag="m_drag_line_2")
         
-        label_names = ["Average_Data_1_p", "Average_Data_2_p", "Average_Data_3_p", "Average_Data_4_p", "Average_Data_5_p", "Average_Data_6_p"]
-        tag_names = ["a_m0_dragpoint", "a_m1_dragpoint", "a_m2_dragpoint", "a_m3_dragpoint", "a_m4_dragpoint", "a_m5_dragpoint"]
+        label_names = ["Magnitude_Data_1_p", "Magnitude_Data_2_p", "Magnitude_Data_3_p", "Magnitude_Data_4_p", "Magnitude_Data_5_p", "Magnitude_Data_6_p"]
+        tag_names = ["m_m0_dragpoint", "m_m1_dragpoint", "m_m2_dragpoint", "m_m3_dragpoint", "m_m4_dragpoint", "m_m5_dragpoint"]
 
         for label, tag in zip(label_names, tag_names):
             dpg.add_drag_point(label=label, default_value=[0,0], color=[255, 255, 0], tag=tag, show=False, callback=on_drag_point)
