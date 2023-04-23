@@ -223,14 +223,15 @@ def get_data_from_serial():
                     magnitude_value = round((3.3 / 4095.0) * float(data[1]), 3) # Convert magnitude to volts and round to 3 decimal points
                     phase_value = round((3.3 / 4095.0) * float(data[2]), 3) # Convert phase to volts and round to 3 decimal points
                     magnitude_value = round(20*(math.log10(magnitude_value)), 5)
+                    phase
 
                     # Append the values to the frequency, magnitude, and phase lists
                     frequency.append(frequency_value)
                     magnitude.append(magnitude_value)
                     phase.append(phase_value)
 
-                    dpg.set_value('magnitude_series_1', [frequency, magnitude])
-                    dpg.set_value('phase_series_1', [frequency, phase])
+                    #dpg.set_value('magnitude_series_1', [frequency, magnitude])
+                    #dpg.set_value('phase_series_1', [frequency, phase])
 
                     # Add the data to the table
                     with dpg.table_row(parent="raw_table"):
@@ -248,8 +249,8 @@ def get_data_from_serial():
                             average_magnitude.append(avg_mag)
                             average_phase.append(avg_ph)
 
-                            # dpg.set_value('phase_series_2', [average_frequency, average_phase])
-                            # dpg.set_value('magnitude_series_2', [average_frequency, average_magnitude])
+                            dpg.set_value('phase_series_1', [average_frequency, average_phase])
+                            dpg.set_value('magnitude_series_1', [average_frequency, average_magnitude])
 
                             # Add the data to the average_table
                             with dpg.table_row(parent="average_table"):
@@ -301,7 +302,7 @@ def take_screenshot():
     im.save(screenshot_path + "screenshot_{}.png".format(timestamp))
     log("Saved to" + screenshot_path + "screenshot_{}.png".format(timestamp))
 
-def table_to_csv(user_id):
+def table_to_csv(user_data):
     global frequency
     global magnitude
     global phase
@@ -309,12 +310,12 @@ def table_to_csv(user_id):
     global average_magnitude
     global average_phase
 
-    if user_id == 34:
+    if user_data == 38:
         data_type = 'raw'
         freq = frequency
         mag = magnitude
         ph = phase
-    elif user_id == 35:
+    elif user_data == 39:
         data_type = 'average'
         freq = average_frequency
         mag = average_magnitude
@@ -382,8 +383,8 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
             dpg.add_menu_item(label="Save Application Screenshot", callback=take_screenshot)
 
         with dpg.menu(label="Data"):
-            dpg.add_menu_item(label="Export Raw Data", callback=table_to_csv, user_data=34)
-            dpg.add_menu_item(label="Export Average Data", callback=table_to_csv, user_data=35)
+            dpg.add_menu_item(label="Export Raw Data", callback=table_to_csv)
+            dpg.add_menu_item(label="Export Average Data", callback=table_to_csv)
 
         with dpg.menu(label="Help"):
             dpg.add_menu_item(label="Plotting Documentation", callback=plotting_documentation)
