@@ -235,7 +235,7 @@ def get_data_from_serial():
                     phase_value = round((3.3 / 4095.0) * float(data[2]), 3) # Convert phase to volts and round to 3 decimal points
                     magnitude_value = round(20*(math.log10(magnitude_value)), 5)
                     # Calculate the phase in degrees
-                    phase_value = round(2 * acos(phase_value))
+                    phase_value = round(2 * acos(phase_value), 5)
 
                     # Append the values to the frequency, magnitude, and phase lists
                     frequency.append(frequency_value)
