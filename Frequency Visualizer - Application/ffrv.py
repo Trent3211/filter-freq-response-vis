@@ -40,6 +40,7 @@ phase_min = -225
 phase_max = 225
 
 # Current directory screenshot folder
+config_name = "config.ini"
 screenshot_path = "./resources/screenshots/"
 data_path = "./resources/data/"
 github = "https://github.com/Trent3211/filter-freq-response-vis"
@@ -48,15 +49,23 @@ documentation = "https://dearpygui.readthedocs.io/en/latest/documentation/plots.
 
 dpg.create_context()
 
-def github():
+def config_app():
+    dpg.configure_app(init_file="config.ini")
+    log("Config file loaded - " + config_name)
+
+def save_init():
+    dpg.save_init_file(config_name, overwrite=True, include_data=True, include_theme=True)
+    log("Config file created.")
+
+def github_link():
     webbrowser.open(github)
     log("GitHub page opened in browser.")
 
-def about():
+def about_link():
     webbrowser.open(about)
     log("About page opened in browser.")
 
-def plotting_documentation():
+def plotting_documentation_link():
     webbrowser.open(documentation)
     log("Plotting documentation opened in browser.")
 
@@ -204,12 +213,12 @@ def get_data_from_serial():
     max_consecutive_empty_reads = 10
     while True:
         data = ser.readline().decode('utf-8').strip()
-        log(data)
         if data.strip() == stop_command: # Edit this for the terminating character
             log("Sweep completed.")
             break
         elif not data:
             num_consecutive_empty_reads += 1
+            log("No data received... (" + str(num_consecutive_empty_reads) + " of " + str(max_consecutive_empty_reads) + ")")
             if num_consecutive_empty_reads >= max_consecutive_empty_reads:
                 log("No data received, stopping the check for the sweep.")
                 break
@@ -371,7 +380,7 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
     # Menu bar #
     with dpg.menu_bar():
         with dpg.menu(label="File"):
-            dpg.add_menu_item(label="Save Settings", callback=print_me)
+            dpg.add_menu_item(label="Save Settings", callback=save_init)
             dpg.add_menu_item(label="Close", callback=print_me)
 
         with dpg.menu(label="Sweep"):
@@ -387,9 +396,9 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
             dpg.add_menu_item(label="Export Average Data", callback=table_to_csv)
 
         with dpg.menu(label="Help"):
-            dpg.add_menu_item(label="Plotting Documentation", callback=plotting_documentation)
-            dpg.add_menu_item(label="Github Repository", callback=github)
-            dpg.add_menu_item(label="About", callback=about)
+            dpg.add_menu_item(label="Plotting Documentation", callback=plotting_documentation_link)
+            dpg.add_menu_item(label="Github Repository", callback=github_link)
+            dpg.add_menu_item(label="About", callback=about_link)
 
     # Connection Handler Child Window #
     with dpg.child_window(label="Connection Handler", width=320, height=130, pos=(6, 42), menubar=True):
@@ -556,9 +565,15 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
 
         dpg.bind_item_theme("magnitude_series_1", "mag_theme")
         
+# ---------- End of GUI code ---------- #
 
 # Create the viewport and start the Dear PyGui event loop
 dpg.create_viewport(title=title, width=1450, height=1000, resizable=False)
+# Dearpygui version log()
+log("Dear PyGui Version: " + dpg.get_dearpygui_version())
+config_app()
+log("Welcome to the FFRV Application.")
+log("Please select a COM port and click the 'Connect' button to begin.")
 dpg.setup_dearpygui()
 dpg.show_viewport()
 dpg.start_dearpygui()
