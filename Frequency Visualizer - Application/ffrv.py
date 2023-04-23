@@ -8,7 +8,7 @@ import webbrowser
 import pandas as pd
 import datetime
 import math
-# inverse cos
+from math import pi
 from math import acos
 import os
 
@@ -236,6 +236,8 @@ def get_data_from_serial():
                     magnitude_value = round(20*(math.log10(magnitude_value)), 5)
                     # Calculate the phase in degrees
                     phase_value = round(2 * acos(phase_value), 5)
+                    # Now convert to radians
+                    phase_value = round(phase_value * (180 / pi), 5)
 
                     # Append the values to the frequency, magnitude, and phase lists
                     frequency.append(frequency_value)
