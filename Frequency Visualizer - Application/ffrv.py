@@ -29,6 +29,7 @@ average_phase = []
 # Start and Stop commands
 start_command = "s"
 stop_command = "e"
+ready_init = "!"
 
 # Data constants
 baud_rate = [9600, 19200, 38400, 57600, 115200]
@@ -123,6 +124,7 @@ def on_connect_button():
             baudrate=dpg.get_value('baud_rate'),
             timeout=1
         )
+        ser.write(ready_init.encode())
         log("Connected to serial port:" + ser.name + " at " + str(ser.baudrate) + " baud")
         dpg.set_value('connection_status', "Connected")
     except SerialException as e:
