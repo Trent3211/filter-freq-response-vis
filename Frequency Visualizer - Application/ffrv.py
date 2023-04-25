@@ -124,18 +124,19 @@ def on_connect_button():
             baudrate=dpg.get_value('baud_rate'),
             timeout=1
         )
-        ser.write(ready_init.encode())
         log("Connected to serial port:" + ser.name + " at " + str(ser.baudrate) + " baud")
+        # Enable the calibrate button
+        dpg.configure_item('calibrate_btn', enabled=True)
         dpg.set_value('connection_status', "Connected")
     except SerialException as e:
         log(f"Error connecting to device: {e}")
     return
 
-
 def on_disconnect_button():
     global ser  # Make sure the ser object is the same one used in on_connect_button
     if ser is not None and ser.is_open:
         ser.close()
+        dpg.configure_item('calibrate_btn', enabled=False)
         log("Disconnected from serial port: " + ser.name)
         dpg.set_value('connection_status', "Disconnected")
     elif ser is None:
@@ -202,6 +203,7 @@ def get_data_from_serial():
     # Clear the data in the raw_table and average_table
     clear_data()
 
+    ser.write(ready_init.encode())
     # Send the character command 's'
     ser.write(start_command.encode())
     
@@ -233,13 +235,16 @@ def get_data_from_serial():
             if len(data) >= 3:
                 try:
                     frequency_value = float(data[0])
-                    magnitude_value = round((3.3 / 4095.0) * float(data[1]), 3) # Convert magnitude to volts and round to 3 decimal points
-                    phase_value = round((3.3 / 4095.0) * float(data[2]), 3) # Convert phase to volts and round to 3 decimal points
-                    magnitude_value = round(20*(math.log10(magnitude_value)), 5)
+                    # Convert magnitude to Voltage
+                    magnitude_value = round((3.3 / 4095.0) * float(data[1]), 3) 
+                    # Convert phase to Voltage
+                    phase_value = round((3.3 / 4095.0) * float(data[2]), 3)
+                    # Convert magnitude to dB
+                    magnitude_value = round(20*(math.log10(magnitude_value/1.1)), 5)
                     # Calculate the phase in degrees
                     phase_value = round(2 * acos(phase_value), 5)
                     # Now convert to radians
-                    phase_value = round(phase_value * (180 / pi), 5)
+                    phase_value = round(phase_value * (180 / pi) - 90, 5)
 
                     # Append the values to the frequency, magnitude, and phase lists
                     frequency.append(frequency_value)
@@ -284,13 +289,7 @@ def get_data_from_serial():
                 except ValueError:
                     log("Invalid data received.")
                     continue
-    
-    # The plots have axis constraints, but now that the sweep is done, we can set it back to autofit
     set_autofit()
-
-# Make a set_axis_min_max function that takes the button that is pressed, and then determines whether it's the phase or magnitude plot.. Then it sets the axis to what is in the text boxes:
-# p_min_axis and p_max_axis for phase
-# m_min_axis and m_max_axis for magnitude
 
 def set_axis_min_max(user_data):
 
@@ -308,7 +307,6 @@ def set_axis_min_max(user_data):
         dpg.set_axis_limits('magnitude_axis_1', int(mag_min), int(mag_max))
     else:
         log("Invalid button ID")
-
 
 def take_screenshot():
     # Just take a screenshot of the entire window
@@ -360,6 +358,14 @@ def table_to_csv(user_data):
     else:
         log("No data to save")
 
+# This will be the calibration function to calibrate the hardware to compensate for the BNC dB loss
+def calibrate():
+    log("Calibration started...")
+    ser.write(ready_init.encode())
+    # Send the calibration command to the hardware to get the value from the pin we are zeroing for.
+    
+
+
 def clear_log():
     dpg.set_value('logger_box', "")
     
@@ -388,7 +394,10 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
     with dpg.menu_bar():
         with dpg.menu(label="File"):
             dpg.add_menu_item(label="Save Settings", callback=save_init)
-            dpg.add_menu_item(label="Close", callback=print_me)
+
+        dpg.add_menu_item(label="Calibrate", callback=print_me, enabled=False, tag="calibrate_btn")
+        with dpg.tooltip(dpg.last_item()):
+            dpg.add_text("Calibrate the hardware to compensate for the BNC dB attenuation, ensure you are connected to the device.")
 
         with dpg.menu(label="Sweep"):
             dpg.add_menu_item(label="Start Sweep", callback=get_data_from_serial)
@@ -487,7 +496,7 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
         with dpg.group(horizontal=True, tag="phase_axis_btn_group"):
             dpg.add_button(label="Set Phase Axis", callback=set_axis_min_max, width=150, user_data=37, tag="p_axis_btn")
             # Add a button for auto fit
-            dpg.add_button(label="Auto Fit", callback=set_autofit, width=150, user_data=40, tag="p_autofit_btn")
+            #dpg.add_button(label="Auto Fit", callback=set_autofit, width=150, user_data=40, tag="p_autofit_btn")
         
 
     with dpg.child_window(label="Magnitude Plot Options", width=450, height=210, pos=(980, 744), menubar=True):
@@ -512,7 +521,7 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
         with dpg.group(horizontal=True, tag="magnitude_axis_btn_group"):
             dpg.add_button(label="Set Magnitude Axis", callback=set_axis_min_max, width=150, user_data=41, tag="m_axis_btn")
             # Add a button for auto fit
-            dpg.add_button(label="Auto Fit", callback=set_autofit, width=150, user_data=38, tag="m_autofit_btn")
+            #.add_button(label="Auto Fit", callback=set_autofit, width=150, user_data=38, tag="m_autofit_btn")
 
     # Phase Plot #
 
