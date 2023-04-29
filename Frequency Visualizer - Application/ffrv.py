@@ -25,6 +25,9 @@ ports = []
 average_frequency = []
 average_magnitude = []
 average_phase = []
+calibration_phase = []
+calibration_magnitude = []
+calibration_frequency = []
 
 # Start and Stop commands
 start_command = "s"
@@ -62,7 +65,7 @@ def save_init():
 
 def github_link():
     webbrowser.open(github)
-    log("GitHub page opened in browser.")
+    log("Github page opened in browser.")
 
 def about_link():
     webbrowser.open(about)
@@ -99,6 +102,12 @@ def clear_data():
     average_magnitude.clear()
     average_phase.clear()
 
+def clear_calibration_data():
+    # Clear the calibration data lists
+    calibration_frequency.clear()
+    calibration_magnitude.clear()
+    calibration_phase.clear()
+
 def get_available_ports():
     # Clear the ports list
     ports.clear()
@@ -113,19 +122,18 @@ def stop_data():
     log("Sweep stop flag sent to device on " + ser.name)
 
 def on_connect_button():
-    global ser  # Make the ser object global so that it can be used in other functions
+    global ser
     try:
         if dpg.get_value('port_name') == "Select a port...":
             raise SerialException("Please select a valid serial port.")
             
         ser = serial.Serial(
-            # The port name is the selected item in the combo box, but it must be parsed to remove the description
             port=dpg.get_value('port_name').split(" - ")[0],
             baudrate=dpg.get_value('baud_rate'),
             timeout=1
         )
         log("Connected to serial port:" + ser.name + " at " + str(ser.baudrate) + " baud")
-        # Enable the calibrate button
+
         dpg.configure_item('calibrate_btn', enabled=True)
         dpg.set_value('connection_status', "Connected")
     except SerialException as e:
@@ -133,7 +141,7 @@ def on_connect_button():
     return
 
 def on_disconnect_button():
-    global ser  # Make sure the ser object is the same one used in on_connect_button
+    global ser 
     if ser is not None and ser.is_open:
         ser.close()
         dpg.configure_item('calibrate_btn', enabled=False)
@@ -188,6 +196,44 @@ def update_ports():
     dpg.configure_item('port_name', items=get_available_ports())
     log("Available ports refreshed.")
 
+def calibration_sweep():
+    # This will calibrate the values of the magnitude and phase arrays based on the attenuation picked up from the calibration sweep
+    # Create calibration arrays
+    global calibration_magnitude
+    global calibration_phase
+    global calibration_frequency
+
+    clear_calibration_data()
+
+    # Send the calibration command to the device
+    ser.write(start_command.encode())
+
+    num_consecutive_empty_reads = 0
+    max_consecutive_empty_reads = 10
+
+    while True:
+        data = ser.readline().decode('utf-8').rstrip()
+        if data.strip() == stop_command:
+            log("Calibration completed.")
+            break
+        elif not data:
+            num_consecutive_empty_reads += 1
+            log("No data received... (" + str(num_consecutive_empty_reads) + " of " + str(max_consecutive_empty_reads) + ")")
+            if num_consecutive_empty_reads >= max_consecutive_empty_reads:
+                log("Calibration failed. No data received.")
+                break
+        else:
+            num_consecutive_empty_reads = 0
+            data = data.split(",")
+            calibration_frequency = float(data[0])
+            calibration_magnitude = round((3.3 / 4095.0) * float(data[1]), 3)
+            calibration_phase = round((3.3 / 4095.0) * float(data[2]), 3)
+
+            calibration_magnitude = round(20*(math.log10(calibration_magnitude / 1.1 )), 5)
+            calibration_phase = round(2 * acos(calibration_phase), 5)
+            calibration_phase = round(calibration_phase * (180 / pi) - 90, 5)
+
+
 def get_data_from_serial():
     global ser
     global magnitude
@@ -196,6 +242,9 @@ def get_data_from_serial():
     global average_frequency
     global average_magnitude
     global average_phase
+    global calibration_magnitude
+    global calibration_phase
+    global calibration_frequency
 
     last_frequency_value = None
     last_frequency_values = []
@@ -203,7 +252,7 @@ def get_data_from_serial():
     # Clear the data in the raw_table and average_table
     clear_data()
 
-    ser.write(ready_init.encode())
+    ser.write(ready_init.encode()) # This somehow worked, but on connect it did not?
     # Send the character command 's'
     ser.write(start_command.encode())
     
@@ -266,9 +315,16 @@ def get_data_from_serial():
                             # Compute average magnitude and phase values for the previous set of frequency values
                             avg_mag = sum([val[0] for val in last_frequency_values]) / len(last_frequency_values)
                             avg_ph = sum([val[1] for val in last_frequency_values]) / len(last_frequency_values)
+
+                            # Now I need to add the calibration values to each of the average values.
+                            # This is done by adding the calibration values to the average values.
+                            avg_mag = round(avg_mag + calibration_magnitude, 5)
+                            avg_ph = round(avg_ph + calibration_phase, 5)
+
                             average_frequency.append(last_frequency_value)
                             average_magnitude.append(avg_mag)
                             average_phase.append(avg_ph)
+                            
 
                             dpg.set_value('phase_series_1', [average_frequency, average_phase])
                             dpg.set_value('magnitude_series_1', [average_frequency, average_magnitude])
@@ -358,14 +414,6 @@ def table_to_csv(user_data):
     else:
         log("No data to save")
 
-# This will be the calibration function to calibrate the hardware to compensate for the BNC dB loss
-def calibrate():
-    log("Calibration started...")
-    ser.write(ready_init.encode())
-    # Send the calibration command to the hardware to get the value from the pin we are zeroing for.
-    
-
-
 def clear_log():
     dpg.set_value('logger_box', "")
     
@@ -395,7 +443,7 @@ with dpg.window(label="Object Window", width=1450, height=1000, pos=(0, 0), tag=
         with dpg.menu(label="File"):
             dpg.add_menu_item(label="Save Settings", callback=save_init)
 
-        dpg.add_menu_item(label="Calibrate", callback=print_me, enabled=False, tag="calibrate_btn")
+        dpg.add_menu_item(label="Calibrate", callback=calibration_sweep, enabled=False, tag="calibrate_btn")
         with dpg.tooltip(dpg.last_item()):
             dpg.add_text("Calibrate the hardware to compensate for the BNC dB attenuation, ensure you are connected to the device.")
 
