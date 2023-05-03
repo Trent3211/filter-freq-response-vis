@@ -205,6 +205,8 @@ def calibration_sweep():
 
     clear_calibration_data()
 
+    log("Calibration started...")
+
     # Send the calibration command to the device
     ser.write(start_command.encode())
 
