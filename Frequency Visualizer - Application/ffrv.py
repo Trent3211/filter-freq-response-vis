@@ -380,12 +380,12 @@ def table_to_csv(user_data):
     global average_magnitude
     global average_phase
 
-    if user_data == 38:
+    if user_data == 40:
         data_type = 'raw'
         freq = frequency
         mag = magnitude
         ph = phase
-    elif user_data == 39:
+    elif user_data == 41:
         data_type = 'average'
         freq = average_frequency
         mag = average_magnitude
